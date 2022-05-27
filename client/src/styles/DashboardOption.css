@@ -1,0 +1,24 @@
+.dashboard-item {
+    background: #2c2d31;
+    border: 1px solid #202b2e;
+    width: 13rem;
+}
+
+.tapSelect {
+    color: #8e8e8f;
+}
+
+.tapSelect:hover {
+    color: #fdfdfc;
+    cursor: pointer;
+}
+
+.tapSelectActive {
+    color: #fdfdfc;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-item {
+        display: none;
+    }
+}

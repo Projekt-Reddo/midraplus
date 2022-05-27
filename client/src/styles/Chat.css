@@ -1,0 +1,42 @@
+.chat-btn {
+    height: 3rem;
+    width: 3rem;
+    background-color: var(--element-bg);
+    color: var(--text);
+    z-index: 69;
+    cursor: pointer;
+}
+
+.chat-box__container {
+    height: 22rem;
+    width: 18rem;
+    background-color: var(--element-bg);
+    color: var(--text);
+    z-index: 69;
+}
+
+.chat-box__chat-bar {
+    height: 2.4rem;
+    width: 100%;
+    background-color: white;
+    bottom: 0;
+    color: black;
+}
+
+.chat-box__input:focus {
+    outline: none;
+}
+
+.chat-box__body {
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: calc(100% - 2.4rem);
+    top: 0;
+    position: absolute;
+}
+
+.chat-box__body::-webkit-scrollbar {
+    width: 0; /* Remove scrollbar space */
+    background: transparent; /* Optional: just make scrollbar invisible */
+}

@@ -1,0 +1,12 @@
+.setting-btn {
+    height: 3rem;
+    width: 3rem;
+    background-color: var(--element-bg);
+    color: var(--text);
+    z-index: 69;
+    cursor: pointer;
+}
+
+.setting-item {
+    background-color: var(--element-bg);
+}

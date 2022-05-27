@@ -1,0 +1,35 @@
+.userManage {
+    background-color: #171615;
+    padding-left: 15rem;
+    height: calc(100vh - 7rem);
+    overflow-y: scroll;
+}
+
+.iconBan {
+    background-color: rgba(239, 111, 158, 0.29);
+    color: #ef6f9e;
+    border-radius: 50%;
+    height: 36px;
+    width: 36px;
+    margin-left: 50%;
+    transform: translate(-50%, 0);
+    text-align: center !important;
+}
+
+.iconLock {
+    background-color: rgba(40, 165, 249, 0.29);
+    color: #28a5f9;
+    border-radius: 50%;
+    height: 36px;
+    width: 36px;
+    margin-left: 50%;
+    transform: translate(-50%, 0);
+    text-align: center !important;
+}
+
+@media screen and (max-width: 768px) {
+    .userManage {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}

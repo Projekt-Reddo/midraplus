@@ -1,0 +1,114 @@
+.dashboard {
+    background-color: #171615;
+    border: 1px solid #515759;
+    color: #fdfdfc;
+    padding-left: 13rem;
+    height: calc(100vh - 7rem);
+    overflow-y: scroll;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+.dashboard-title {
+    margin-top: 1rem;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 36px;
+    /* identical to box height */
+    color: #fdfdfc;
+}
+
+.dashboard-sub {
+    font-style: normal;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 18px;
+    /* identical to box height */
+    color: #fdfdfc;
+}
+
+.dashboard-info {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+}
+
+.dashboard-chart {
+    background: #2c2d31;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    height: calc(60vh - 9rem);
+}
+
+@media screen and (max-width: 1024px) {
+    .dashboard-chart {
+        width: 69vw;
+    }
+    @media screen and (max-width: 768px) {
+        .dashboard-chart {
+            width: 90vw;
+        }
+    }
+}
+
+.icon-contain {
+    background: rgba(243, 242, 243, 0.51);
+    border-radius: 8px;
+    width: 3rem;
+    height: 3rem;
+    margin-top: 1.25rem;
+    margin-left: 1.25rem;
+}
+
+.info-contain {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 2rem;
+    /* identical to box height */
+    color: #fdfdfc;
+}
+
+.info-detail {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 2rem;
+    line-height: 24px;
+    /* identical to box height */
+    color: #fdfdfc;
+    margin-left: 20px;
+}
+
+.icon-icon {
+    align-items: center;
+}
+
+text {
+    fill: #fdfdfc !important;
+}
+
+.select-time option {
+    color: #000000;
+    background: none;
+}
+.select-time select {
+    color: #ffffff;
+    background: none;
+}
+
+.select-time {
+    margin-left: auto;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.text-chart {
+    font-size: 1.2rem;
+}
+.detail-contant {
+    height: calc(45vh - 9rem);
+}

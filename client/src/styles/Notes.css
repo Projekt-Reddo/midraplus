@@ -1,0 +1,12 @@
+.note-item {
+    background-color: var(--element-bg);
+}
+
+.note-input {
+    color: white;
+}
+
+.note-input:focus {
+    outline: none;
+    box-shadow: none;
+}

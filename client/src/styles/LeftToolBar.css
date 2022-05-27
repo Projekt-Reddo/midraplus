@@ -1,0 +1,190 @@
+.leftToolBar {
+    color: white;
+    background-color: #3d3d3d;
+    border-radius: 0px 8px 8px 0px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.icon {
+    height: 3rem;
+    cursor: pointer;
+}
+
+.line {
+    height: 100%;
+    width: 3px;
+}
+
+.whiteLine {
+    height: 100%;
+    width: 3px;
+    background-color: white;
+}
+
+.brushOptionBoardHide {
+    display: none;
+}
+
+.brushOptionBoard {
+    color: white;
+    background-color: #3d3d3d;
+    top: 50%;
+    transform: translate(0, -50%);
+    margin-top: -10.5rem;
+    margin-left: 4rem;
+    border-radius: 8px;
+}
+
+.clearAllBoardHide {
+    display: none;
+}
+
+.clearAllBoard {
+    color: white;
+    background-color: #3d3d3d;
+    top: 50%;
+    transform: translate(0, -50%);
+    margin-top: -6.4rem;
+    width: 10rem;
+    height: 3.5rem;
+    margin-left: 4rem;
+    border-radius: 8px;
+}
+
+.otherToolOptionHide {
+    display: none;
+}
+
+.otherToolOption {
+    color: white;
+    background-color: #3d3d3d;
+    top: 50%;
+    transform: translate(0, -50%);
+    margin-top: 10.5rem;
+    margin-left: 4rem;
+    border-radius: 8px;
+}
+
+.verticalLine {
+    border-left: 1px solid rgba(243, 242, 243, 0.4);
+    height: 100%;
+}
+
+.eyeXL {
+    border: 2px solid white;
+    border-radius: 100%;
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+}
+.eyeXL::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0.7rem;
+    height: 0.7rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    border-radius: 100%;
+}
+
+.eyeL {
+    border: 2px solid white;
+    border-radius: 100%;
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+}
+.eyeL::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0.5rem;
+    height: 0.5rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    border-radius: 100%;
+}
+
+.eyeM {
+    border: 2px solid white;
+    border-radius: 100%;
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+}
+.eyeM::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0.35rem;
+    height: 0.35rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    border-radius: 100%;
+}
+
+.eyeS {
+    border: 2px solid white;
+    border-radius: 100%;
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+}
+.eyeS::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0.25rem;
+    height: 0.25rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    border-radius: 100%;
+}
+
+.dot {
+    height: 1.5rem;
+    width: 1.5rem;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+@media screen and (max-height: 500px) {
+    .leftToolBar {
+        max-height: 20rem;
+        overflow-y: scroll;
+        align-content: flex-start;
+    }
+
+    .brushOptionBoard {
+        margin-top: -4.5rem;
+        z-index: 100;
+    }
+
+    .clearAllBoard {
+        margin-top: -4.4rem;
+        z-index: 100;
+    }
+
+    .otherToolOption {
+        margin-top: 6.5rem;
+    }
+}

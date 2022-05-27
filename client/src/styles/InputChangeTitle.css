@@ -1,0 +1,7 @@
+.input-change-title:focus-visible {
+    /* border: none; */
+    outline: none;
+}
+.input-change-title:focus {
+    border: none;
+}

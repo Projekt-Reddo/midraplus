@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
+}
+
+:root {
+    /* Ưhite Mode Colors */
+    --bg: #232222;
+    --element-bg: #3d3d3d;
+    --text: #fff;
+    --text-small: rgba(231, 233, 240, 0.8);
+    --color-border: rgba(48, 48, 48, 0.16);
+}
+
+::-webkit-scrollbar {
+    width: 0; /* Remove scrollbar space */
+    background: transparent; /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #62656e;
+}
+
+.border-rounded {
+    border-radius: 6px;
+}
+
+.app-shadow {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
