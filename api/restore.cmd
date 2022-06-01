@@ -1,0 +1,1 @@
+dotnet restore ./account_service && dotnet restore ./admin_service && dotnet restore ./board_service && dotnet restore ./draw_service

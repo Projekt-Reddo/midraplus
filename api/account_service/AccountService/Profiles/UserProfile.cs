@@ -1,6 +1,7 @@
 using AccountService.Dtos;
 using AccountService.Models;
 using AutoMapper;
+using UserService;
 
 namespace AccountService.Profiles
 {
@@ -9,6 +10,8 @@ namespace AccountService.Profiles
         public UserProfile()
         {
             CreateMap<User, UserReadDto>();
+
+            CreateMap<User, UserGrpc>();
         }
     }
 }
