@@ -1,3 +1,4 @@
+using DrawService.Dtos;
 using DrawService.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // SignalR
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IDictionary<string, DrawConnections>>(opt => new Dictionary<string, DrawConnections>());
+builder.Services.AddSingleton<IDictionary<string, ICollection<ShapeReadDto>>>(opt => new Dictionary<string, ICollection<ShapeReadDto>>());
+
+// Auto mapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
@@ -28,10 +34,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 // Authorization
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+// builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
 
 #endregion
 
@@ -40,17 +46,17 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+// app.MapControllers();
 
 // SignalR
 app.MapHub<BoardHub>("/board");
