@@ -1,6 +1,7 @@
 using System.Net;
 using BoardService.Data;
 using BoardService.Dtos;
+using BoardService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,12 @@ builder.Services.AddSingleton<IMongoContext, MongoContext>();
 
 // Auto mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Repository
+builder.Services.AddScoped<IBoardRepo, BoardRepo>();
+
+// Grpc Clients
+builder.Services.AddScoped<IGrpcUserClient, GrpcUserClient>();
 
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
