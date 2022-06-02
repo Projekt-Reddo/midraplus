@@ -1,6 +1,7 @@
 using System.Net;
 using AccountService.Data;
 using AccountService.Dtos;
+using AccountService.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
@@ -22,8 +23,13 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Repository
 builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<ISignInRepo, SignInRepo>();
+
+// alows CORS
+builder.Services.AddCors();
 
 // Authentication
+ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
 {
     opt.RequireHttpsMetadata = false;
@@ -41,6 +47,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 // Authorization
 builder.Services.AddAuthorization();
+
+// JWT 
+builder.Services.AddSingleton<IJwtGenerator>(new JwtGenerator(configuration["JwtSecret"]));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -83,6 +92,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// cors has to be on top of all
+app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+.AllowAnyHeader()
+.AllowAnyMethod()
+.AllowCredentials());
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
