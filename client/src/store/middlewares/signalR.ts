@@ -62,12 +62,12 @@ export const signalRMiddleware = (storeAPI: any) => {
         if (action.type === JOIN_ROOM) {
             await connection.board.invoke("JoinRoom", {
                 user: action.payload.user,
-                board: action.payload.board,
+                boardId: action.payload.board,
             });
 
             await connection.chat.invoke("JoinRoom", {
                 user: action.payload.user,
-                board: action.payload.board,
+                boardId: action.payload.board,
             });
 
             connection.board.on("InitShapes", (shapes: any) => {
@@ -97,21 +97,18 @@ export const signalRMiddleware = (storeAPI: any) => {
                     payload: shape,
                 });
             });
-            connection.board.on("ReceiveBoard", (shape: any) =>{
+            connection.board.on("ReceiveBoard", (shape: any) => {
                 const state = storeAPI.getState();
                 state.initLC.loadSnapshot(shape);
+            });
 
-            })
-            
             connection.board.on("ClearAll", () => {
                 const state = storeAPI.getState();
                 state.initLC.clear();
                 state.shape = [];
                 state.myShape.undoStack = [];
                 state.myShape.redoStack = [];
-            })
-            
-
+            });
 
             connection.board.on(
                 "ReceiveMouse",

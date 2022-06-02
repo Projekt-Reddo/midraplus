@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Google.Apis.Auth;
 using MongoDB.Driver;
+using static BoardService.GrpcBoard;
+using AccountService.Services;
 
 namespace AccountService.Controllers
 {
@@ -17,14 +19,24 @@ namespace AccountService.Controllers
         private readonly ISignInRepo _signInRepo;
         private readonly IJwtGenerator _jwtGenerator;
         private readonly IMapper _mapper;
+        private readonly IGrpcBoardClient _boardClient;
 
-        public AuthController(IUserRepo userRepo, ISignInRepo signInRepo, IJwtGenerator jwtGenerator, IMapper mapper)
+        public AuthController(IUserRepo userRepo, ISignInRepo signInRepo, IJwtGenerator jwtGenerator, IMapper mapper,
+        IGrpcBoardClient boardClient
+        )
         {
             _userRepo = userRepo;
             _signInRepo = signInRepo;
             _jwtGenerator = jwtGenerator;
             _mapper = mapper;
+            _boardClient = boardClient;
         }
+        /// <summary>
+        /// Login and sign up with google
+        /// </summary>
+        /// <param name="userView">user info for login/signup for google account</param>
+        /// <returns>200 / 400 / 404</returns>
+        [HttpPost]
         [HttpPost("google")]
         public async Task<IActionResult> Google([FromBody] UserView userView)
         {
@@ -32,15 +44,21 @@ namespace AccountService.Controllers
             {
                 var payload = await GoogleJsonWebSignature.ValidateAsync(userView.tokenId, new GoogleJsonWebSignature.ValidationSettings());
                 (var user, var isNew) = await _userRepo.Authenticate(payload);
-                // if (isNew)
-                // {
-                //     var insertedBoard = await _boardRepo.Add(new Board()
-                //     {
-                //         Name = $"Default {user.Name}",
-                //         UserId = user.Id,
-                //     });
-                // }
+                if (isNew)
+                {
+                    // Call AddBoard service from grpc board client
+                    var status = _boardClient.AddBoard(new BoardService.BoardCreateRequest
+                    {
+                        UserId = user.Id,
+                        Name = $"Default {user.Name}"
+                    });
+                    if (!status!.Status)
+                    {
+                        BadRequest(new ResponseDto(400, "Cannot create board"));
+                    }
+                }
 
+                // create claims and token for return to client
                 var claims = _jwtGenerator.GenerateClaims(user);
                 var token = _jwtGenerator.GenerateJwtToken(claims);
 

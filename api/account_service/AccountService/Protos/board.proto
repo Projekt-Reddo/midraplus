@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "BoardService";
+
+service GrpcBoard {
+    rpc AddBoard(BoardCreateRequest) returns (BoardCreateResponse) {}
+}
+
+message BoardCreateRequest{
+    string userId = 1;
+    string name = 2;
+}
+
+message BoardCreateResponse{
+    bool status = 1;
+}

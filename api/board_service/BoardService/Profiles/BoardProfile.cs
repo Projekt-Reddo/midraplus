@@ -1,6 +1,7 @@
 using AutoMapper;
 using BoardService.Dtos;
 using BoardService.Models;
+using UserService;
 
 namespace BoardService.Profiles
 {
@@ -14,6 +15,8 @@ namespace BoardService.Profiles
 
             CreateMap<Board, BoardUpdateDto>();
             CreateMap<BoardUpdateDto, Board>();
+
+            CreateMap<UserGrpc, User>();
         }
     }
 }

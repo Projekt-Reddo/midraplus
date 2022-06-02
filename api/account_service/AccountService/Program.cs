@@ -2,6 +2,7 @@ using System.Net;
 using AccountService.Data;
 using AccountService.Dtos;
 using AccountService.Helpers;
+using AccountService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
@@ -51,6 +52,13 @@ builder.Services.AddAuthorization();
 // JWT 
 builder.Services.AddSingleton<IJwtGenerator>(new JwtGenerator(configuration["JwtSecret"]));
 
+// gRpc Client
+builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
+
+// Grpc Server
+builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -89,6 +97,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // For testing Grpc
+    app.MapGrpcReflectionService();
 }
 
 app.UseHttpsRedirection();
@@ -129,6 +140,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGrpcService<GrpcUserServer>();
 
 app.Run();
 
