@@ -27,6 +27,10 @@ builder.Services.AddScoped<IBoardRepo, BoardRepo>();
 // Grpc Clients
 builder.Services.AddScoped<IGrpcUserClient, GrpcUserClient>();
 
+// Grpc Server
+builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
+
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
 {
@@ -84,6 +88,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapGrpcReflectionService();
 }
 
 app.UseHttpsRedirection();
@@ -113,11 +118,14 @@ app.Use(async (context, next) =>
     }
 });
 
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGrpcService<GrpcBoardServer>();
 
 app.Run();
 
