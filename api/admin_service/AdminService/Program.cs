@@ -1,6 +1,7 @@
 using System.Net;
 using AdminService.Data;
 using AdminService.Dtos;
+using AdminService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,9 @@ builder.Services.AddSingleton<IMongoContext, MongoContext>();
 // Auto mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// Repository
+builder.Services.AddScoped<ISignInRepo, SignInRepo>();
+
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
 {
@@ -38,6 +42,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 // Authorization
 builder.Services.AddAuthorization();
+
+// Grpc Server
+builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -77,6 +85,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // For testing Grpc
+    app.MapGrpcReflectionService();
 }
 
 app.UseHttpsRedirection();
@@ -111,6 +122,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGrpcService<GrpcSignInServer>();
 
 app.Run();
 

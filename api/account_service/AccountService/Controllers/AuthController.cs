@@ -15,21 +15,20 @@ namespace AccountService.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepo _userRepo;
-        private readonly ISignInRepo _signInRepo;
         private readonly IJwtGenerator _jwtGenerator;
         private readonly IMapper _mapper;
         private readonly IGrpcBoardClient _boardClient;
+        private readonly IGrpcSignInClient _signInClient;
 
-        public AuthController(IUserRepo userRepo, ISignInRepo signInRepo, IJwtGenerator jwtGenerator, IMapper mapper,
-        IGrpcBoardClient boardClient
-        )
+        public AuthController(IUserRepo userRepo, IJwtGenerator jwtGenerator, IMapper mapper, IGrpcBoardClient boardClient, IGrpcSignInClient signInClient)
         {
             _userRepo = userRepo;
-            _signInRepo = signInRepo;
             _jwtGenerator = jwtGenerator;
             _mapper = mapper;
             _boardClient = boardClient;
+            _signInClient = signInClient;
         }
+
         /// <summary>
         /// Login and sign up with google
         /// </summary>
@@ -43,6 +42,7 @@ namespace AccountService.Controllers
             {
                 var payload = await GoogleJsonWebSignature.ValidateAsync(userView.tokenId, new GoogleJsonWebSignature.ValidationSettings());
                 (var user, var isNew) = await _userRepo.Authenticate(payload);
+                #region BoardGrpc 
                 if (isNew)
                 {
                     // Call AddBoard service from grpc board client
@@ -56,6 +56,7 @@ namespace AccountService.Controllers
                         BadRequest(new ResponseDto(400, "Cannot create board"));
                     }
                 }
+                #endregion
 
                 // create claims and token for return to client
                 var claims = _jwtGenerator.GenerateClaims(user);
@@ -64,25 +65,14 @@ namespace AccountService.Controllers
                 var userToReturn = _mapper.Map<AuthDto>(user);
                 userToReturn.AccessToken = token;
 
-                DateTime currentDay = new DateTime(
-                                    DateTime.Now.Year,
-                                    DateTime.Now.Month,
-                                    DateTime.Now.Day);
-                var filter = Builders<SignIn>.Filter.Eq("At", currentDay);
-                var sigin = await _signInRepo.FindOneAsync(filter);
-                if (sigin == null)
+                #region SignInGrpc
+                var signInCountStatus = _signInClient.AddSignIn(new AdminService.SignInCreateRequest());
+                if (!signInCountStatus!.Status)
                 {
-                    await _signInRepo.AddOneAsync(new SignIn()
-                    {
-                        At = currentDay,
-                        Times = 1
-                    });
+                    BadRequest(new ResponseDto(400, "Cannot create new SignInCount"));
                 }
-                else
-                {
-                    sigin.Times += 1;
-                    await _signInRepo.UpdateOneAsync(sigin.Id, sigin);
-                }
+                #endregion
+
                 return Ok(
                     userToReturn
                 );
