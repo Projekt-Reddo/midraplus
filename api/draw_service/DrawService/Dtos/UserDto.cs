@@ -3,7 +3,7 @@ namespace DrawService.Dtos
     /// <summary>
     /// Class store user information in draw
     /// </summary>
-    public class DrawConnections
+    public class DrawConnection
     {
         public UserConnectionInfo User { get; set; } = null!;
 
