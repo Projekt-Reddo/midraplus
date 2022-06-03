@@ -1,6 +1,7 @@
 using System.Net;
 using AccountService.Data;
 using AccountService.Dtos;
+using AccountService.Helpers;
 using AccountService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -23,8 +24,13 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Repository
 builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<ISignInRepo, SignInRepo>();
+
+// alows CORS
+builder.Services.AddCors();
 
 // Authentication
+ConfigurationManager configuration = builder.Configuration;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
 {
     opt.RequireHttpsMetadata = false;
@@ -42,6 +48,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 // Authorization
 builder.Services.AddAuthorization();
+
+// JWT 
+builder.Services.AddSingleton<IJwtGenerator>(new JwtGenerator(configuration["JwtSecret"]));
+
+// gRpc Client
+builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
+builder.Services.AddScoped<IGrpcSignInClient, GrpcSignInClient>();
 
 // Grpc Server
 builder.Services.AddGrpc();
@@ -91,6 +104,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// cors has to be on top of all
+app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+.AllowAnyHeader()
+.AllowAnyMethod()
+.AllowCredentials());
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {

@@ -13,6 +13,15 @@
     <PackageReference Include="MongoDB.Driver" Version="2.15.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+
+     <!-- Grpc -->
+    <PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
+    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.46.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Grpc Server -->
+    <Protobuf Include="Protos\sigin.proto" GrpcService="Server" />
   </ItemGroup>
 
 </Project>
