@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Google.Apis.Auth;
 using MongoDB.Driver;
-using static BoardService.GrpcBoard;
 using AccountService.Services;
 
 namespace AccountService.Controllers
