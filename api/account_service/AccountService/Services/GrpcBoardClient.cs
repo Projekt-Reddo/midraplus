@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using BoardService;
 using Grpc.Net.Client;
@@ -32,7 +28,7 @@ namespace AccountService.Services
             var channel = GrpcChannel.ForAddress(boardServerUrl);
             _client = new GrpcBoard.GrpcBoardClient(channel);
 
-            _logger.LogInformation($"Connected to User Server with {boardServerUrl}");
+            _logger.LogInformation($"Connected to Board Server with {boardServerUrl}");
         }
 
         public BoardCreateResponse? AddBoard(BoardCreateRequest boardCreateRequest)
@@ -42,7 +38,6 @@ namespace AccountService.Services
             {
                 BoardCreateResponse response = _client.AddBoard(boardCreateRequest);
 
-                // return _mapper.Map<User>(response);
                 return response;
             }
             catch (Exception ex)

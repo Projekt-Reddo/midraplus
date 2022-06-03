@@ -1,7 +1,6 @@
 using Grpc.Core;
 using AutoMapper;
 using BoardService.Data;
-using BoardService;
 using BoardService.Models;
 
 namespace BoardService.Services
