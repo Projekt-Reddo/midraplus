@@ -54,6 +54,7 @@ builder.Services.AddSingleton<IJwtGenerator>(new JwtGenerator(configuration["Jwt
 
 // gRpc Client
 builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
+builder.Services.AddScoped<IGrpcSignInClient, GrpcSignInClient>();
 
 // Grpc Server
 builder.Services.AddGrpc();
