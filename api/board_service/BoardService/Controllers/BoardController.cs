@@ -53,5 +53,23 @@ namespace BoardService.Controllers
             return Ok(new ResponseDto(200, "Board created"));
         }
 
+        /// <summary>
+        /// Delete an board by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>200 / 404</returns>
+        [HttpDelete("{id}")]
+        // [AuthResourceAttribute(ResourceType = Constant.AuthResourceType.Board)]
+        public async Task<ActionResult<ResponseDto>> DeleteBoard(string id)
+        {
+            var rs = await _boardRepo.DeleteOneAsync(id);
+
+            if (rs == false)
+            {
+                return BadRequest(new ResponseDto(404, "Board not found"));
+            }
+
+            return Ok(new ResponseDto(200, "Board deleted"));
+        }
     }
 }
