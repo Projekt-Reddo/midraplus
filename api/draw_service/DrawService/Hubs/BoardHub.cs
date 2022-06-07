@@ -24,6 +24,8 @@ namespace DrawService.Hubs
             _noteList = noteList;
         }
 
+        #region Join & Leave Room
+
         /// <summary>
         /// User join room and add info to connection list
         /// </summary>
@@ -56,20 +58,33 @@ namespace DrawService.Hubs
             }
         }
 
-        #region Note
+        #endregion
+
+        #region Shape
 
         /// <summary>
-        /// Load old notes from Database
+        /// When user draw to board
         /// </summary>
-        /// <param name="boardId"></param>
+        /// <param name="shape">What user draw (line, text, eraser)</param>
         /// <returns></returns>
-        public async Task LoadNotesFromDb(string boardId)
+        public async Task DrawShape(ShapeReadDto shape)
         {
-            if (!_noteList.ContainsKey(boardId))
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
             {
-                _noteList[boardId] = new List<NoteReadDto>();
+                var existShape = _shapeList[drawConnection.BoardId].FirstOrDefault(s => s.Id == shape.Id);
+
+                if (existShape is null)
+                {
+                    _shapeList[drawConnection.BoardId].Add(shape);
+                }
+
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveShape, shape);
             }
         }
+
+        #endregion
+
+        #region Note
 
         /// <summary>
         /// Load old notes of a board from active noteList
@@ -144,7 +159,44 @@ namespace DrawService.Hubs
 
         #endregion
 
-        #region Note
+        #region Database
+
+        /// <summary>
+        /// Load old notes from Database
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadBoardFromDb(string boardId)
+        {
+            LoadShapesFromDb(boardId);
+            LoadNotesFromDb(boardId);
+        }
+
+        /// <summary>
+        /// Load old shapes from Database
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadShapesFromDb(string boardId)
+        {
+            if (!_shapeList.ContainsKey(boardId))
+            {
+                _shapeList[boardId] = new List<ShapeReadDto>();
+            }
+        }
+
+        /// <summary>
+        /// Load old notes from Database
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadNotesFromDb(string boardId)
+        {
+            if (!_noteList.ContainsKey(boardId))
+            {
+                _noteList[boardId] = new List<NoteReadDto>();
+            }
+        }
 
         protected async Task SaveBoardInfoToDb(DrawConnection drawConnection)
         {
