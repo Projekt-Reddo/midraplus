@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "BoardService";
+
+service GrpcBoard {
+    rpc SaveBoardData(BoardDataRequest) returns (BoardDataResponse) {}
+}
+
+// #region Shapes & Note SaveRequest
+
+message BoardDataRequest {
+    string boardId = 1;
+    repeated ShapeGrpc shapes = 2;
+    repeated NoteGrpc notes = 3;
+}
+
+message ShapeGrpc {
+    string className = 1;
+    string data = 2; // Convert object to Json string
+}
+
+message NoteGrpc {
+    float x = 1;
+    float y = 2;
+    string text = 3;
+}
+
+message BoardDataResponse {
+    bool status = 1;
+    string message = 2;
+}
+
+// #endregion

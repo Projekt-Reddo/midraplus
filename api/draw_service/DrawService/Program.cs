@@ -1,5 +1,6 @@
 using DrawService.Dtos;
 using DrawService.Hubs;
+using DrawService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,6 +16,9 @@ builder.Services.AddSingleton<IDictionary<string, List<NoteReadDto>>>(opt => new
 
 // Auto mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Grpc Clients
+builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
 
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
