@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-svc
+  template:
+    metadata:
+      labels:
+        app: admin-svc
+    spec:
+      containers:
+        - name: admin-svc
+          image: hostcode0301/admin-svc:v0.1.0
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-clusterip-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: admin-svc
+  ports:
+    - name: admin-svc
+      protocol: TCP
+      port: 5244
+      targetPort: 5244
+    - name: artistsgrpc
+      protocol: TCP
+      port: 666
+      targetPort: 666

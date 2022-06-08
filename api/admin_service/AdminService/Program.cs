@@ -88,9 +88,9 @@ if (app.Environment.IsDevelopment())
 
     // For testing Grpc
     app.MapGrpcReflectionService();
-}
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
+}
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {

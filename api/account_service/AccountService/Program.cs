@@ -101,15 +101,15 @@ if (app.Environment.IsDevelopment())
 
     // For testing Grpc
     app.MapGrpcReflectionService();
+
+    // cors has to be on top of all
+    app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
+
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
-
-// cors has to be on top of all
-app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
-.AllowAnyHeader()
-.AllowAnyMethod()
-.AllowCredentials());
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
