@@ -1,5 +1,6 @@
 using DrawService.Dtos;
 using DrawService.Hubs;
+using DrawService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,11 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // SignalR
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<IDictionary<string, DrawConnections>>(opt => new Dictionary<string, DrawConnections>());
+builder.Services.AddSingleton<IDictionary<string, DrawConnection>>(opt => new Dictionary<string, DrawConnection>());
 builder.Services.AddSingleton<IDictionary<string, ICollection<ShapeReadDto>>>(opt => new Dictionary<string, ICollection<ShapeReadDto>>());
+builder.Services.AddSingleton<IDictionary<string, List<NoteReadDto>>>(opt => new Dictionary<string, List<NoteReadDto>>());
 
 // Auto mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Grpc Clients
+builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
 
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>

@@ -37,7 +37,6 @@ namespace AccountService.Services
             try
             {
                 BoardCreateResponse response = _client.AddBoard(boardCreateRequest);
-
                 return response;
             }
             catch (Exception ex)
