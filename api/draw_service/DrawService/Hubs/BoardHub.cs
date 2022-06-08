@@ -1,5 +1,7 @@
 using AutoMapper;
+using BoardService;
 using DrawService.Dtos;
+using DrawService.Services;
 using Microsoft.AspNetCore.SignalR;
 using static DrawService.Helpers.Constant;
 
@@ -11,17 +13,20 @@ namespace DrawService.Hubs
         private readonly IMapper _mapper;
         private readonly IDictionary<string, ICollection<ShapeReadDto>> _shapeList; // Shape list map to board
         private readonly IDictionary<string, List<NoteReadDto>> _noteList; // Note list map to board
+        private readonly IGrpcBoardClient _grpcBoardClient; // Grpc client to Board service
 
         public BoardHub(
             IDictionary<string, DrawConnection> connections,
             IMapper mapper,
             IDictionary<string, ICollection<ShapeReadDto>> shapeList,
-            IDictionary<string, List<NoteReadDto>> noteList)
+            IDictionary<string, List<NoteReadDto>> noteList,
+            IGrpcBoardClient grpcBoardClient)
         {
             _connections = connections;
             _mapper = mapper;
             _shapeList = shapeList;
             _noteList = noteList;
+            _grpcBoardClient = grpcBoardClient;
         }
 
         #region Join & Leave Room
@@ -38,6 +43,12 @@ namespace DrawService.Hubs
             // Load old notes data & create temp note list for that user
             await LoadNotesFromDb(connection.BoardId);
 
+            // Create new list to save shapes for that room
+            NewShapeList(connection.BoardId);
+
+            // Create new list to save notes for that room
+            NewNoteList(connection.BoardId);
+
             await Groups.AddToGroupAsync(Context.ConnectionId, connection.BoardId);
         }
 
@@ -52,7 +63,7 @@ namespace DrawService.Hubs
                 _connections.Remove(Context.ConnectionId);
 
                 // Save Board Info To Db
-                SaveBoardInfoToDb(connection);
+                await SaveBoardInfoToDb(connection);
 
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, connection.BoardId);
             }
@@ -198,6 +209,48 @@ namespace DrawService.Hubs
             }
         }
 
+        /// <summary>
+        /// Load old notes from Database
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadBoardFromDb(string boardId)
+        {
+            LoadShapesFromDb(boardId);
+            LoadNotesFromDb(boardId);
+        }
+
+        /// <summary>
+        /// Load old shapes from Database
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadShapesFromDb(string boardId)
+        {
+            if (!_shapeList.ContainsKey(boardId))
+            {
+                _shapeList[boardId] = new List<ShapeReadDto>();
+            }
+        }
+
+        /// <summary>
+        /// Load old notes from Database
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadNotesFromDb(string boardId)
+        {
+            if (!_noteList.ContainsKey(boardId))
+            {
+                _noteList[boardId] = new List<NoteReadDto>();
+            }
+        }
+
+        /// <summary>
+        /// Save current board info to Database
+        /// </summary>
+        /// <param name="drawConnection"></param>
+        /// <returns></returns>
         protected async Task SaveBoardInfoToDb(DrawConnection drawConnection)
         {
             var remainingConnections = _connections.Values.Where(x => x.BoardId == drawConnection.BoardId);
@@ -206,11 +259,43 @@ namespace DrawService.Hubs
             if (remainingConnections.Count() == 0)
             {
                 // Code to handle DB here
+                var shapeGrpcs = _mapper.Map<ICollection<ShapeGrpc>>(_shapeList[drawConnection.BoardId]);
+                var noteGrpcs = _mapper.Map<ICollection<NoteGrpc>>(_noteList[drawConnection.BoardId]);
 
+                // Save shapes and notes to Board service
+                var rs = await _grpcBoardClient.SaveBoardData(drawConnection.BoardId, shapeGrpcs, noteGrpcs);
 
                 // Remove active shape and node
                 _shapeList.Remove(drawConnection.BoardId);
                 _noteList.Remove(drawConnection.BoardId);
+            }
+        }
+
+        #endregion
+
+        #region Handle Dictionary
+
+        /// <summary>
+        /// Create new element of ShapeList with boardId is key
+        /// </summary>
+        /// <param name="boardId"></param>
+        protected void NewShapeList(string boardId)
+        {
+            if (!_shapeList.ContainsKey(boardId))
+            {
+                _shapeList[boardId] = new List<ShapeReadDto>();
+            }
+        }
+
+        /// <summary>
+        /// Create new element of NoteList with boardId is key
+        /// </summary>
+        /// <param name="noteId"></param>
+        protected void NewNoteList(string noteId)
+        {
+            if (!_noteList.ContainsKey(noteId))
+            {
+                _noteList[noteId] = new List<NoteReadDto>();
             }
         }
 

@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace DrawService.Helpers
 {
     public static class Constant
@@ -20,6 +15,13 @@ namespace DrawService.Helpers
             public const string ClearAll = "ClearAll";
             public const string ReceiveUndo = "ReceiveUndo";
             public const string ReceiveRedo = "ReceiveRedo";
+        }
+
+        public static class ShapeDataType
+        {
+            public const string LinePath = "LinePath";
+            public const string ErasedLinePath = "ErasedLinePath";
+            public const string Text = "Text";
         }
     }
 }
