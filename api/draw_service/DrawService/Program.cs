@@ -65,7 +65,7 @@ app.UseAuthorization();
 
 // SignalR
 app.MapHub<BoardHub>("/board");
-
+app.MapHub<ChatHub>("/chat");
 app.Run();
 
 #endregion
