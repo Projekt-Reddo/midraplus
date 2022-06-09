@@ -22,6 +22,26 @@ namespace BoardService.Controllers
             _grpcUserClient = grpcUserClient;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<BoardReadDto>> GetUserBoards(string userId)
+        {
+            var user = _grpcUserClient.GetUser(userId);
+
+            if (user == null)
+            {
+                return NotFound(new ResponseDto(404, "User not found"));
+            }
+            // Get all boards of user
+            var filter = Builders<Board>.Filter.Eq("UserId", userId);
+
+            var boardsFromRepo = await _boardRepo.FindManyAsync(filter: filter);
+
+            var boardForListDto = _mapper.Map<IEnumerable<BoardForListDto>>(boardsFromRepo);
+
+            return Ok(boardForListDto);
+            
+        }
+
         /// <summary>
         /// Add new board to database
         /// </summary>
