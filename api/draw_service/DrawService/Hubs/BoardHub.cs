@@ -67,6 +67,26 @@ namespace DrawService.Hubs
 
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, connection.BoardId);
             }
+
+            if (connection != null)
+            {
+                await CurrentOnlineUser(connection.BoardId);
+            }
+        }
+
+        #endregion
+
+        #region Current online user
+
+        /// <summary>
+        /// Number of online people
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task CurrentOnlineUser(string boardId)
+        {
+            var users = _connections.Values.Where(user => user.BoardId == boardId).Select(user => user.User);
+            await Clients.Group(boardId).SendAsync(HubReturnMethod.OnlineUsers, users);
         }
 
         #endregion
