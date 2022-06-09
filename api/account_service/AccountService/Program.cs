@@ -107,9 +107,9 @@ if (app.Environment.IsDevelopment())
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials());
-
-    app.UseHttpsRedirection();
 }
+
+app.UseHttpsRedirection();
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
