@@ -14,11 +14,14 @@ spec:
     spec:
       containers:
         - name: account-svc
-          image: hostcode0301/account-svc:v0.1.0
+          image: draplus/account_svc:v0.1.0
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: 500m
+              memory: "500Mi"
+            requests:
+              cpu: 250m
+              memory: "250Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -33,7 +36,7 @@ spec:
       protocol: TCP
       port: 5252
       targetPort: 5252
-    - name: artistsgrpc
+    - name: account-grpc
       protocol: TCP
       port: 666
       targetPort: 666

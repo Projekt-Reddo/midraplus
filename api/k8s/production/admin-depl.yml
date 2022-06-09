@@ -14,11 +14,14 @@ spec:
     spec:
       containers:
         - name: admin-svc
-          image: hostcode0301/admin-svc:v1.0.0
+          image: draplus/admin-svc:v1.0.0
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: 500m
+              memory: "500Mi"
+            requests:
+              cpu: 250m
+              memory: "250Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -33,7 +36,7 @@ spec:
       protocol: TCP
       port: 5244
       targetPort: 5244
-    - name: artistsgrpc
+    - name: admin-grpc
       protocol: TCP
       port: 666
       targetPort: 666
