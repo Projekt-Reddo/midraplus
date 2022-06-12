@@ -1,4 +1,6 @@
+using BoardService.Models;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace BoardService.Data
@@ -78,6 +80,7 @@ namespace BoardService.Data
 
         public virtual async Task<(long total, IEnumerable<TEntity> entities)> FindManyAsync(FilterDefinition<TEntity> filter = null!, BsonDocument? sort = null!, BsonDocument? lookup = null!, int? limit = null!, int? skip = null!)
         {
+            RegisterMissingClass();
 
             var query = _collection.Aggregate().Match(filter is null ? Builders<TEntity>.Filter.Empty : filter);
 
@@ -125,6 +128,8 @@ namespace BoardService.Data
 
         public virtual async Task<TEntity> FindOneAsync(FilterDefinition<TEntity> filter = null!)
         {
+            RegisterMissingClass();
+
             var entity = await _collection.Find(filter is null ? Builders<TEntity>.Filter.Empty : filter).FirstOrDefaultAsync();
             return entity;
         }
@@ -135,6 +140,21 @@ namespace BoardService.Data
         public void Dispose()
         {
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Call this method before accessing collection to handle missing discriminator class cause exception
+        /// </summary>
+        private void RegisterMissingClass()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(PathData)))
+            {
+                BsonClassMap.RegisterClassMap<PathData>();
+            }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(TextData)))
+            {
+                BsonClassMap.RegisterClassMap<TextData>();
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ Work the same for other services
 
 ```
 cd client
-npm serve
+npm start
 ```
 
 ### 2.2 Server api - Microservices APIs with ASP.NET

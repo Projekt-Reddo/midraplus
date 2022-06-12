@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: board-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: board-svc
+  template:
+    metadata:
+      labels:
+        app: board-svc
+    spec:
+      containers:
+        - name: board-svc
+          image: draplus/board-svc:v0.2.1
+          resources:
+            limits:
+              cpu: 500m
+              memory: "500Mi"
+            requests:
+              cpu: 250m
+              memory: "250Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: board-clusterip-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: board-svc
+  ports:
+    - name: board-svc
+      protocol: TCP
+      port: 5277
+      targetPort: 5277
+    - name: board-grpc
+      protocol: TCP
+      port: 666
+      targetPort: 666
