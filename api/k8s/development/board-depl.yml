@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: board-svc
-          image: draplus/board-svc:v0.2.1
+          image: draplus/board-svc:v0.3.0
           resources:
             limits:
               cpu: 500m

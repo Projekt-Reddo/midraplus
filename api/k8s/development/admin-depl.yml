@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: admin-svc
-          image: draplus/admin-svc:v0.2.1
+          image: draplus/admin-svc:v0.3.0
           resources:
             limits:
               cpu: 500m
