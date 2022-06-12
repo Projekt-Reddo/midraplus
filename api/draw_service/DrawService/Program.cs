@@ -1,4 +1,6 @@
+using DrawService.Dtos;
 using DrawService.Hubs;
+using DrawService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,6 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // SignalR
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IDictionary<string, DrawConnection>>(opt => new Dictionary<string, DrawConnection>());
+builder.Services.AddSingleton<IDictionary<string, ICollection<ShapeReadDto>>>(opt => new Dictionary<string, ICollection<ShapeReadDto>>());
+builder.Services.AddSingleton<IDictionary<string, List<NoteReadDto>>>(opt => new Dictionary<string, List<NoteReadDto>>());
+
+// Auto mapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Grpc Clients
+builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
 
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
@@ -28,10 +39,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 // Authorization
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+// builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
 
 #endregion
 
@@ -40,21 +51,21 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+// app.MapControllers();
 
 // SignalR
 app.MapHub<BoardHub>("/board");
-
+app.MapHub<ChatHub>("/chat");
 app.Run();
 
 #endregion
