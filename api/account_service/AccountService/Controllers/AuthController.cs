@@ -79,9 +79,8 @@ namespace AccountService.Controllers
             }
             catch (Exception ex)
             {
-                BadRequest(new ResponseDto(400, ex.Message));
+                throw ex;
             }
-            return BadRequest(new ResponseDto(400));
         }
     }
 }
