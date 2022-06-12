@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DrawService.Dtos;
 using Microsoft.AspNetCore.SignalR;
 using static DrawService.Helpers.Constant;
@@ -18,6 +14,8 @@ namespace DrawService.Hubs
             _botUser = "What I'm I doing here?";
             _connections = connections;
         }
+
+        #region Jon & Leave room
 
         /// <summary>
         /// Join a room
@@ -37,6 +35,27 @@ namespace DrawService.Hubs
         /// <returns></returns>
         public async Task LeaveRoom()
         {
+            await HandleUserLeaveRoom();
+        }
+
+        /// <summary>
+        /// Out put the user leave room when connection is lost
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            await HandleUserLeaveRoom();
+
+            await base.OnConnectedAsync();
+        }
+
+        /// <summary>
+        /// Handle leave room and remove the user from the store dictionary
+        /// </summary>
+        /// <returns></returns>
+        private async Task HandleUserLeaveRoom()
+        {
             if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? userConnection))
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, userConnection.BoardId);
@@ -44,6 +63,10 @@ namespace DrawService.Hubs
                 _connections.Remove(Context.ConnectionId);
             }
         }
+
+        #endregion
+
+        #region Chat
 
         /// <summary>
         /// Send message to group of user
@@ -58,5 +81,7 @@ namespace DrawService.Hubs
                 await Clients.Group(userConnection.BoardId).SendAsync(HubReturnMethod.ReceiveMessage, user, message, DateTime.Now);
             }
         }
+
+        #endregion
     }
 }
