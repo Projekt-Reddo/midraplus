@@ -19,7 +19,7 @@ spec:
         paths:
 
           # Account service
-          - path: /api/account
+          - path: /api/user
             pathType: Prefix
             backend:
               service: 
