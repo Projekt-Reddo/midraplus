@@ -38,5 +38,5 @@ spec:
       targetPort: 5252
     - name: account-grpc
       protocol: TCP
-      port: 666
-      targetPort: 666
+      port: 50051
+      targetPort: 50051

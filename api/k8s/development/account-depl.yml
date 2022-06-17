@@ -1,42 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: account-depl
+    name: account-depl
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: account-svc
-  template:
-    metadata:
-      labels:
-        app: account-svc
-    spec:
-      containers:
-        - name: account-svc
-          image: draplus/account-svc:v0.3.0
-          resources:
-            limits:
-              cpu: 500m
-              memory: "500Mi"
-            requests:
-              cpu: 250m
-              memory: "250Mi"
+    replicas: 1
+    selector:
+        matchLabels:
+            app: account-svc
+    template:
+        metadata:
+            labels:
+                app: account-svc
+        spec:
+            containers:
+                - name: account-svc
+                  image: draplus/account-svc:v0.3.1
+                  resources:
+                      limits:
+                          cpu: 500m
+                          memory: "500Mi"
+                      requests:
+                          cpu: 250m
+                          memory: "250Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: account-clusterip-svc
+    name: account-clusterip-svc
 spec:
-  type: ClusterIP
-  selector:
-    app: account-svc
-  ports:
-    - name: account-svc
-      protocol: TCP
-      port: 5252
-      targetPort: 5252
-    - name: account-grpc
-      protocol: TCP
-      port: 666
-      targetPort: 666
+    type: ClusterIP
+    selector:
+        app: account-svc
+    ports:
+        - name: account-svc
+          protocol: TCP
+          port: 5252
+          targetPort: 5252
+        - name: account-grpc
+          protocol: TCP
+          port: 50051
+          targetPort: 50051
