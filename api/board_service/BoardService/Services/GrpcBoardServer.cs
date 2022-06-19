@@ -22,6 +22,35 @@ namespace BoardService.Services
             _boardRepo = boardRepo;
         }
 
+        public override async Task<IsUserOwnBoardResponse> IsUserOwnBoard(IsUserOwnBoardRequest request, ServerCallContext context)
+        {
+            var boardFromRepo = await _boardRepo.FindOneAsync(Builders<Board>.Filter.Eq(b => b.Id, request.BoardId));
+
+            if (boardFromRepo == null)
+            {
+                return new IsUserOwnBoardResponse
+                {
+                    Status = false,
+                    Message = "Board id not found"
+                };
+            }
+
+            if (boardFromRepo.UserId == request.UserId)
+            {
+                return new IsUserOwnBoardResponse()
+                {
+                    Status = true,
+                    Message = "User is owner of board"
+                };
+            }
+
+            return new IsUserOwnBoardResponse()
+            {
+                Status = false,
+                Message = "User is not owner of board"
+            };
+        }
+
         public override async Task<BoardCreateResponse> AddBoard(BoardCreateRequest request, ServerCallContext context)
         {
             // Create new board

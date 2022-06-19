@@ -3,9 +3,24 @@ syntax = "proto3";
 option csharp_namespace = "BoardService";
 
 service GrpcBoard {
+    rpc IsUserOwnBoard(IsUserOwnBoardRequest) returns (IsUserOwnBoardResponse) {}
     rpc AddBoard(BoardCreateRequest) returns (BoardCreateResponse) {}
     rpc SaveBoardData(BoardDataRequest) returns (BoardDataResponse) {}
 }
+
+// #region GetBoardRequest
+
+message IsUserOwnBoardRequest{
+    string boardId = 1;
+    string userId = 2;
+}
+
+message IsUserOwnBoardResponse{
+    bool status = 1;
+    string message = 2;
+}
+
+// #endregion
 
 // #region BoardCreateRequest
 

@@ -7,6 +7,7 @@ namespace DrawService.Services
 {
     public interface IGrpcBoardClient
     {
+        Task<bool> IsUserOwnBoard(string boardId, string userId);
         Task<bool> SaveBoardData(string boardId, ICollection<ShapeGrpc> shapes, ICollection<NoteGrpc> notes);
     }
 
@@ -28,6 +29,19 @@ namespace DrawService.Services
             // Create Grpc client
             var channel = GrpcChannel.ForAddress(boardServerUrl);
             _client = new GrpcBoard.GrpcBoardClient(channel);
+        }
+
+        public async Task<bool> IsUserOwnBoard(string boardId, string userId)
+        {
+            var request = new IsUserOwnBoardRequest
+            {
+                BoardId = boardId,
+                UserId = userId
+            };
+
+            var response = await _client.IsUserOwnBoardAsync(request);
+
+            return response.Status;
         }
 
         public async Task<bool> SaveBoardData(string boardId, ICollection<ShapeGrpc> shapes, ICollection<NoteGrpc> notes)
