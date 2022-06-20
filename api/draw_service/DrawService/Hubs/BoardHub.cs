@@ -1,6 +1,7 @@
 using AutoMapper;
 using BoardService;
 using DrawService.Dtos;
+using DrawService.Models;
 using DrawService.Services;
 using Microsoft.AspNetCore.SignalR;
 using static DrawService.Helpers.Constant;
@@ -40,14 +41,7 @@ namespace DrawService.Hubs
         {
             _connections[Context.ConnectionId] = connection;
 
-            // Load old notes data & create temp note list for that user
-            await LoadNotesFromDb(connection.BoardId);
-
-            // Create new list to save shapes for that room
-            NewShapeList(connection.BoardId);
-
-            // Create new list to save notes for that room
-            NewNoteList(connection.BoardId);
+            await LoadBoardFromDb(connection.BoardId);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, connection.BoardId);
         }
@@ -109,6 +103,19 @@ namespace DrawService.Hubs
         #endregion
 
         #region Shape
+
+        /// <summary>
+        /// Handle load init shapes because cannot return Shapes when the first user join a board.
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadInitShapes(string boardId)
+        {
+            if (_shapeList.TryGetValue(boardId, out ICollection<ShapeReadDto>? shapes))
+            {
+                await Clients.Caller.SendAsync(HubReturnMethod.ReceiveShape, _shapeList[boardId]);
+            }
+        }
 
         /// <summary>
         /// When user draw to board
@@ -216,8 +223,21 @@ namespace DrawService.Hubs
         /// <returns></returns>
         public async Task LoadBoardFromDb(string boardId)
         {
-            await LoadShapesFromDb(boardId);
-            await LoadNotesFromDb(boardId);
+            var connectionsOnABoard = _connections.Values.Where(x => x.BoardId == boardId);
+
+            if (connectionsOnABoard.Count() <= 1)
+            {
+                BoardReadDto board = await _grpcBoardClient.LoadBoardData(boardId);
+
+                if (board is not null)
+                {
+                    _noteList[boardId] = _mapper.Map<List<NoteReadDto>>(board.Notes);
+                    _shapeList[boardId] = _mapper.Map<List<ShapeReadDto>>(board.Shapes);
+                }
+            }
+
+            NewNoteList(boardId);
+            NewShapeList(boardId);
         }
 
         /// <summary>
@@ -225,12 +245,9 @@ namespace DrawService.Hubs
         /// </summary>
         /// <param name="boardId"></param>
         /// <returns></returns>
-        public async Task LoadShapesFromDb(string boardId)
+        public void LoadShapesFromDb(string boardId, List<ShapeReadDto> shapeList)
         {
-            if (!_shapeList.ContainsKey(boardId))
-            {
-                _shapeList[boardId] = new List<ShapeReadDto>();
-            }
+            _shapeList[boardId] = shapeList;
         }
 
         /// <summary>
@@ -238,49 +255,9 @@ namespace DrawService.Hubs
         /// </summary>
         /// <param name="boardId"></param>
         /// <returns></returns>
-        public async Task LoadNotesFromDb(string boardId)
+        public void LoadNotesFromDb(string boardId, List<NoteReadDto> shapeList)
         {
-            if (!_noteList.ContainsKey(boardId))
-            {
-                _noteList[boardId] = new List<NoteReadDto>();
-            }
-        }
-
-        /// <summary>
-        /// Load old notes from Database
-        /// </summary>
-        /// <param name="boardId"></param>
-        /// <returns></returns>
-        public async Task LoadBoardFromDb(string boardId)
-        {
-            LoadShapesFromDb(boardId);
-            LoadNotesFromDb(boardId);
-        }
-
-        /// <summary>
-        /// Load old shapes from Database
-        /// </summary>
-        /// <param name="boardId"></param>
-        /// <returns></returns>
-        public async Task LoadShapesFromDb(string boardId)
-        {
-            if (!_shapeList.ContainsKey(boardId))
-            {
-                _shapeList[boardId] = new List<ShapeReadDto>();
-            }
-        }
-
-        /// <summary>
-        /// Load old notes from Database
-        /// </summary>
-        /// <param name="boardId"></param>
-        /// <returns></returns>
-        public async Task LoadNotesFromDb(string boardId)
-        {
-            if (!_noteList.ContainsKey(boardId))
-            {
-                _noteList[boardId] = new List<NoteReadDto>();
-            }
+            _noteList[boardId] = shapeList;
         }
 
         /// <summary>

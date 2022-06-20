@@ -88,5 +88,14 @@ namespace BoardService.Services
                 Message = "Board data saved"
             };
         }
+
+        public override async Task<BoardLoadDataResponse> LoadBoardData(BoardLoadDataRequest request, ServerCallContext context)
+        {
+            Board boardFromRepo = await _boardRepo.FindOneAsync(Builders<Board>.Filter.Eq(b => b.Id, request.BoardId));
+
+            BoardLoadDataResponse boardResult = _mapper.Map<BoardLoadDataResponse>(boardFromRepo);
+
+            return boardResult;
+        }
     }
 }

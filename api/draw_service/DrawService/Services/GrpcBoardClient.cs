@@ -1,5 +1,7 @@
 using AutoMapper;
 using BoardService;
+using DrawService.Dtos;
+using DrawService.Models;
 using Grpc.Net.Client;
 using Newtonsoft.Json;
 
@@ -8,6 +10,7 @@ namespace DrawService.Services
     public interface IGrpcBoardClient
     {
         Task<bool> SaveBoardData(string boardId, ICollection<ShapeGrpc> shapes, ICollection<NoteGrpc> notes);
+        Task<BoardReadDto> LoadBoardData(string boardId);
     }
 
     public class GrpcBoardClient : IGrpcBoardClient
@@ -45,6 +48,20 @@ namespace DrawService.Services
             _logger.LogInformation($"Saved board - {boardId} with status {JsonConvert.SerializeObject(response)}");
 
             return response.Status;
+        }
+
+        public async Task<BoardReadDto> LoadBoardData(string boardId)
+        {
+            var request = new BoardLoadDataRequest
+            {
+                BoardId = boardId
+            };
+
+            var response = await _client.LoadBoardDataAsync(request);
+
+            _logger.LogInformation($"Load board - {boardId} with status {JsonConvert.SerializeObject(response)}");
+
+            return _mapper.Map<BoardReadDto>(response);
         }
     }
 }
