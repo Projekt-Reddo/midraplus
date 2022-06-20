@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-svc
+  template:
+    metadata:
+      labels:
+        app: admin-svc
+    spec:
+      containers:
+        - name: admin-svc
+          image: draplus/admin-svc:v1.0.0
+          resources:
+            limits:
+              cpu: 500m
+              memory: "500Mi"
+            requests:
+              cpu: 250m
+              memory: "250Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-clusterip-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: admin-svc
+  ports:
+    - name: admin-svc
+      protocol: TCP
+      port: 5244
+      targetPort: 5244
+    - name: admin-grpc
+      protocol: TCP
+      port: 50051
+      targetPort: 50051

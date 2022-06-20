@@ -58,6 +58,23 @@ namespace DrawService.Hubs
         /// <returns></returns>
         public async Task LeaveRoom()
         {
+            await HandleUserLeaveRoom();
+        }
+
+        /// <summary>
+        /// Handle out room when user lost connection
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            await HandleUserLeaveRoom();
+
+            await base.OnConnectedAsync();
+        }
+
+        protected async Task HandleUserLeaveRoom()
+        {
             if (_connections.TryGetValue(Context.ConnectionId, out var connection))
             {
                 _connections.Remove(Context.ConnectionId);
@@ -67,6 +84,26 @@ namespace DrawService.Hubs
 
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, connection.BoardId);
             }
+
+            if (connection != null)
+            {
+                await CurrentOnlineUser(connection.BoardId);
+            }
+        }
+
+        #endregion
+
+        #region Current online user
+
+        /// <summary>
+        /// Number of online people
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task CurrentOnlineUser(string boardId)
+        {
+            var users = _connections.Values.Where(user => user.BoardId == boardId).Select(user => user.User);
+            await Clients.Group(boardId).SendAsync(HubReturnMethod.OnlineUsers, users);
         }
 
         #endregion
@@ -179,8 +216,8 @@ namespace DrawService.Hubs
         /// <returns></returns>
         public async Task LoadBoardFromDb(string boardId)
         {
-            LoadShapesFromDb(boardId);
-            LoadNotesFromDb(boardId);
+            await LoadShapesFromDb(boardId);
+            await LoadNotesFromDb(boardId);
         }
 
         /// <summary>
@@ -273,7 +310,7 @@ namespace DrawService.Hubs
 
         #endregion
 
-        #region Handle Dictionary
+        #region New storage dictionary for shapes and notes
 
         /// <summary>
         /// Create new element of ShapeList with boardId is key

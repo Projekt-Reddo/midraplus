@@ -52,9 +52,8 @@ builder.Services.AddAuthorization();
 // JWT 
 builder.Services.AddSingleton<IJwtGenerator>(new JwtGenerator(configuration["JwtSecret"]));
 
-// gRpc Client
-builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
-builder.Services.AddScoped<IGrpcSignInClient, GrpcSignInClient>();
+// rabbitMQ service
+builder.Services.AddScoped<IMessageBusPublisher, MessageBusPublisher>();
 
 // Grpc Server
 builder.Services.AddGrpc();
@@ -101,15 +100,15 @@ if (app.Environment.IsDevelopment())
 
     // For testing Grpc
     app.MapGrpcReflectionService();
+
+    // cors has to be on top of all
+    app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
 }
 
 app.UseHttpsRedirection();
-
-// cors has to be on top of all
-app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
-.AllowAnyHeader()
-.AllowAnyMethod()
-.AllowCredentials());
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
