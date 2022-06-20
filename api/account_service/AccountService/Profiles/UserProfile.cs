@@ -12,6 +12,8 @@ namespace AccountService.Profiles
             CreateMap<User, UserReadDto>();
 
             CreateMap<User, UserGrpc>();
+
+            CreateMap<User, UserManageListDto>();
         }
     }
 }
