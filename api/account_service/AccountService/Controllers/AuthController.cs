@@ -17,16 +17,20 @@ namespace AccountService.Controllers
         private readonly IUserRepo _userRepo;
         private readonly IJwtGenerator _jwtGenerator;
         private readonly IMapper _mapper;
-        private readonly IGrpcBoardClient _boardClient;
-        private readonly IGrpcSignInClient _signInClient;
 
-        public AuthController(IUserRepo userRepo, IJwtGenerator jwtGenerator, IMapper mapper, IGrpcBoardClient boardClient, IGrpcSignInClient signInClient)
+        public IMessageBusPublisher _messageBusPublisher { get; }
+        public ILogger<AuthController> _logger { get; }
+
+        public AuthController(IUserRepo userRepo, IJwtGenerator jwtGenerator, IMapper mapper,
+            IMessageBusPublisher messageBusPublisher,
+            ILogger<AuthController> logger
+            )
         {
             _userRepo = userRepo;
             _jwtGenerator = jwtGenerator;
             _mapper = mapper;
-            _boardClient = boardClient;
-            _signInClient = signInClient;
+            _messageBusPublisher = messageBusPublisher;
+            _logger = logger;
         }
 
         /// <summary>
@@ -42,18 +46,22 @@ namespace AccountService.Controllers
             {
                 var payload = await GoogleJsonWebSignature.ValidateAsync(userView.tokenId, new GoogleJsonWebSignature.ValidationSettings());
                 (var user, var isNew) = await _userRepo.Authenticate(payload);
-                #region BoardGrpc 
+                #region Create default board Asynchronous Message Queue
                 if (isNew)
                 {
-                    // Call AddBoard service from grpc board client
-                    var status = _boardClient.AddBoard(new BoardService.BoardCreateRequest
+                    try // publish create board message to rabbitmq
                     {
-                        UserId = user.Id,
-                        Name = $"Default {user.Name}"
-                    });
-                    if (!status!.Status)
+                        var createBoardEventDto = new MessageCreateBoardPublishDto
+                        {
+                            Id = user.Id,
+                            Name = $"Default {user.Name} board",
+                            Event = "CreateBoard"
+                        };
+                        _messageBusPublisher.PublishCreateBoard(createBoardEventDto);
+                    }
+                    catch (Exception ex)
                     {
-                        BadRequest(new ResponseDto(400, "Cannot create board"));
+                        _logger.LogWarning(ex.Message, "Error when publish add default board to message queue");
                     }
                 }
                 #endregion
@@ -65,12 +73,21 @@ namespace AccountService.Controllers
                 var userToReturn = _mapper.Map<AuthDto>(user);
                 userToReturn.AccessToken = token;
 
-                #region SignInGrpc
-                var signInCountStatus = _signInClient.AddSignIn(new AdminService.SignInCreateRequest());
-                if (!signInCountStatus!.Status)
+                #region AddSignIn Asynchronous Message Queue
+                try // publish add sign in message to rabbitmq
                 {
-                    BadRequest(new ResponseDto(400, "Cannot create new SignInCount"));
+                    var addSignInEventDto = new MessageAddSiginPublishDto
+                    {
+                        Event = "AddSignIn"
+                    };
+                    _messageBusPublisher.PublishAddSignIn();
                 }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex.Message, "Error when publish add SignIn to message queue");
+                }
+
+
                 #endregion
 
                 return Ok(

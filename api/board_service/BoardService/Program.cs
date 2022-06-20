@@ -1,6 +1,7 @@
 using System.Net;
 using BoardService.Data;
 using BoardService.Dtos;
+using BoardService.EventHandlers;
 using BoardService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -22,7 +23,11 @@ builder.Services.AddSingleton<IMongoContext, MongoContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Repository
-builder.Services.AddScoped<IBoardRepo, BoardRepo>();
+builder.Services.AddSingleton<IBoardRepo, BoardRepo>();
+
+// RabbitMQ Subscriber
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+builder.Services.AddHostedService<MessageBusSubscriber>();
 
 // Grpc Clients
 builder.Services.AddScoped<IGrpcUserClient, GrpcUserClient>();
