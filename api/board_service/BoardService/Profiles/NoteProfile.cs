@@ -8,6 +8,8 @@ namespace BoardService.Profiles
         public NoteProfile()
         {
             CreateMap<NoteGrpc, Note>();
+
+            CreateMap<Note, NoteGrpc>();
         }
     }
 }

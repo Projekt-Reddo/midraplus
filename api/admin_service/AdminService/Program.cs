@@ -1,6 +1,7 @@
 using System.Net;
 using AdminService.Data;
 using AdminService.Dtos;
+using AdminService.EventHandlers;
 using AdminService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
@@ -22,7 +23,12 @@ builder.Services.AddSingleton<IMongoContext, MongoContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Repository
-builder.Services.AddScoped<ISignInRepo, SignInRepo>();
+builder.Services.AddSingleton<ISignInRepo, SignInRepo>();
+
+// RabbitMQ Subscriber
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+builder.Services.AddHostedService<MessageBusSubscriber>();
+
 
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>

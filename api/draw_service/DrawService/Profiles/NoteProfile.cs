@@ -14,6 +14,7 @@ namespace DrawService.Profiles
             CreateMap<NoteCreateDto, NoteReadDto>();
 
             CreateMap<NoteReadDto, NoteGrpc>();
+            CreateMap<NoteGrpc, NoteReadDto>();
         }
     }
 }

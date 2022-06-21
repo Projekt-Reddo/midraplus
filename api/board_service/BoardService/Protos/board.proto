@@ -6,6 +6,7 @@ service GrpcBoard {
     rpc IsUserOwnBoard(IsUserOwnBoardRequest) returns (IsUserOwnBoardResponse) {}
     rpc AddBoard(BoardCreateRequest) returns (BoardCreateResponse) {}
     rpc SaveBoardData(BoardDataRequest) returns (BoardDataResponse) {}
+    rpc LoadBoardData(BoardLoadDataRequest) returns (BoardLoadDataResponse) {}
 }
 
 // #region GetBoardRequest
@@ -57,6 +58,20 @@ message NoteGrpc {
 message BoardDataResponse {
     bool status = 1;
     string message = 2;
+}
+
+// #endregion
+
+// #region Shapes & Note SaveRequest
+
+message BoardLoadDataRequest {
+    string boardId = 1;
+}
+
+message BoardLoadDataResponse {
+    string boardId = 1;
+    repeated ShapeGrpc shapes = 2;
+    repeated NoteGrpc notes = 3;
 }
 
 // #endregion
