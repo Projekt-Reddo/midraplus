@@ -147,7 +147,7 @@ namespace DrawService.Hubs
             {
                 if (await _grpcBoardClient.IsUserOwnBoard(drawConnection.BoardId, drawConnection.User.Id))
                 {
-                    await _grpcBoardClient.SaveBoardData(drawConnection.BoardId, null!, null!);
+                    await _grpcBoardClient.ClearBoard(drawConnection.BoardId);
                     _shapeList[drawConnection.BoardId].Clear();
                     await Clients.Group(drawConnection.BoardId).SendAsync(HubReturnMethod.ClearAll);
                 }
