@@ -231,6 +231,44 @@ namespace DrawService.Hubs
 
         #endregion
 
+        #region Undo & Redo
+
+        /// <summary>
+        /// Undo method
+        /// </summary>
+        /// <param name="shapeId"></param>
+        /// <returns></returns>
+        public async Task Undo(string shapeId)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                _shapeList[drawConnection.BoardId] = _shapeList[drawConnection.BoardId].Where((s) => s.Id != shapeId).ToList();
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveUndo, shapeId);
+            }
+        }
+
+        /// <summary>
+        /// Redo method
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <returns></returns>
+        public async Task Redo(ShapeReadDto shape)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                var existShape = _shapeList[drawConnection.BoardId].FirstOrDefault(s => s.Id == shape.Id);
+
+                if (existShape is null)
+                {
+                    _shapeList[drawConnection.BoardId].Add(shape);
+                }
+
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveShape, shape);
+            }
+        }
+
+        #endregion
+
         #region Database
 
         /// <summary>
