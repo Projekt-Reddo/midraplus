@@ -52,9 +52,8 @@ builder.Services.AddAuthorization();
 // JWT 
 builder.Services.AddSingleton<IJwtGenerator>(new JwtGenerator(configuration["JwtSecret"]));
 
-// gRpc Client
-builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
-builder.Services.AddScoped<IGrpcSignInClient, GrpcSignInClient>();
+// rabbitMQ service
+builder.Services.AddScoped<IMessageBusPublisher, MessageBusPublisher>();
 
 // Grpc Server
 builder.Services.AddGrpc();
