@@ -137,6 +137,23 @@ namespace DrawService.Hubs
             }
         }
 
+        /// <summary>
+        /// Clear all data in board
+        /// </summary>
+        /// <returns></returns>
+        public async Task ClearAll()
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                if (await _grpcBoardClient.IsUserOwnBoard(drawConnection.BoardId, drawConnection.User.Id))
+                {
+                    await _grpcBoardClient.ClearBoard(drawConnection.BoardId);
+                    _shapeList[drawConnection.BoardId].Clear();
+                    await Clients.Group(drawConnection.BoardId).SendAsync(HubReturnMethod.ClearAll);
+                }
+            }
+        }
+
         #endregion
 
         #region Note
