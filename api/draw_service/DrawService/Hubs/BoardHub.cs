@@ -102,6 +102,25 @@ namespace DrawService.Hubs
 
         #endregion
 
+        #region Mouse Moving
+
+        /// <summary>
+        /// Current online users mouse position
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="isMove"></param>
+        /// <returns></returns>
+        public async Task SendMouse(int x, int y, bool isMove)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveMouse, drawConnection.User.Id, drawConnection.User.Name, x, y, isMove);
+            }
+        }
+
+        #endregion
+
         #region Shape
 
         /// <summary>
