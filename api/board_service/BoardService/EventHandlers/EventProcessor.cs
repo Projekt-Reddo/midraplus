@@ -49,13 +49,14 @@ namespace BoardService.EventHandlers
                     // Create new chat room & board
                     var createdBoard = await _repository.AddOneAsync(new Board
                     {
-                        UserId = createBoardEventDto.Id,
+                        UserId = createBoardEventDto!.Id,
                         Name = createBoardEventDto.Name,
                     });
                     _logger.LogInformation($"Create a default board {createBoardEventDto.Name}");
-                }catch (Exception ex)
+                }
+                catch
                 {
-                    _logger.LogWarning($"Failed to a default board {createBoardEventDto.Name}");
+                    _logger.LogWarning($"Failed to a default board {createBoardEventDto!.Name}");
                 }
             }
         }
