@@ -102,6 +102,25 @@ namespace DrawService.Hubs
 
         #endregion
 
+        #region Mouse Moving
+
+        /// <summary>
+        /// Current online users mouse position
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="isMove"></param>
+        /// <returns></returns>
+        public async Task SendMouse(int x, int y, bool isMove)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveMouse, drawConnection.User.Id, drawConnection.User.Name, x, y, isMove);
+            }
+        }
+
+        #endregion
+
         #region Shape
 
         /// <summary>
@@ -134,6 +153,23 @@ namespace DrawService.Hubs
                 }
 
                 await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveShape, shape);
+            }
+        }
+
+        /// <summary>
+        /// Clear all data in board
+        /// </summary>
+        /// <returns></returns>
+        public async Task ClearAll()
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                if (await _grpcBoardClient.IsUserOwnBoard(drawConnection.BoardId, drawConnection.User.Id))
+                {
+                    await _grpcBoardClient.ClearBoard(drawConnection.BoardId);
+                    _shapeList[drawConnection.BoardId].Clear();
+                    await Clients.Group(drawConnection.BoardId).SendAsync(HubReturnMethod.ClearAll);
+                }
             }
         }
 
@@ -209,6 +245,44 @@ namespace DrawService.Hubs
                 _noteList[drawConnection.BoardId] = _noteList[drawConnection.BoardId].Where((s) => s.Id != noteId).ToList();
 
                 await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveDeleteNote, noteId);
+            }
+        }
+
+        #endregion
+
+        #region Undo & Redo
+
+        /// <summary>
+        /// Undo method
+        /// </summary>
+        /// <param name="shapeId"></param>
+        /// <returns></returns>
+        public async Task Undo(string shapeId)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                _shapeList[drawConnection.BoardId] = _shapeList[drawConnection.BoardId].Where((s) => s.Id != shapeId).ToList();
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveUndo, shapeId);
+            }
+        }
+
+        /// <summary>
+        /// Redo method
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <returns></returns>
+        public async Task Redo(ShapeReadDto shape)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                var existShape = _shapeList[drawConnection.BoardId].FirstOrDefault(s => s.Id == shape.Id);
+
+                if (existShape is null)
+                {
+                    _shapeList[drawConnection.BoardId].Add(shape);
+                }
+
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveShape, shape);
             }
         }
 

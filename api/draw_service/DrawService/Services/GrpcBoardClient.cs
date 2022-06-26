@@ -9,6 +9,8 @@ namespace DrawService.Services
 {
     public interface IGrpcBoardClient
     {
+        Task<bool> ClearBoard(string boardId);
+        Task<bool> IsUserOwnBoard(string boardId, string userId);
         Task<bool> SaveBoardData(string boardId, ICollection<ShapeGrpc> shapes, ICollection<NoteGrpc> notes);
         Task<BoardReadDto> LoadBoardData(string boardId);
     }
@@ -31,6 +33,31 @@ namespace DrawService.Services
             // Create Grpc client
             var channel = GrpcChannel.ForAddress(boardServerUrl);
             _client = new GrpcBoard.GrpcBoardClient(channel);
+        }
+
+        public async Task<bool> ClearBoard(string boardId)
+        {
+            var request = new ClearBoardRequest
+            {
+                BoardId = boardId
+            };
+
+            var response = await _client.ClearBoardAsync(request);
+
+            return response.Status;
+        }
+
+        public async Task<bool> IsUserOwnBoard(string boardId, string userId)
+        {
+            var request = new IsUserOwnBoardRequest
+            {
+                BoardId = boardId,
+                UserId = userId
+            };
+
+            var response = await _client.IsUserOwnBoardAsync(request);
+
+            return response.Status;
         }
 
         public async Task<bool> SaveBoardData(string boardId, ICollection<ShapeGrpc> shapes, ICollection<NoteGrpc> notes)
@@ -61,7 +88,9 @@ namespace DrawService.Services
 
             _logger.LogInformation($"Load board - {boardId} with status {JsonConvert.SerializeObject(response)}");
 
-            return _mapper.Map<BoardReadDto>(response);
+            var returnedBoard = _mapper.Map<BoardReadDto>(response);
+
+            return returnedBoard;
         }
     }
 }
