@@ -2,7 +2,9 @@ using AccountService.Data;
 using AccountService.Dtos;
 using AccountService.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace AccountService.Controllers
@@ -18,6 +20,33 @@ namespace AccountService.Controllers
         {
             _userRepo = userRepo;
             _mapper = mapper;
+        }
+
+        /// <summary>
+        /// Get Users with pagination 
+        /// </summary>
+        /// <returns>List of user and total User</returns>
+        [HttpGet("")]
+        public async Task<ActionResult<PaginationResponse<IEnumerable<UserManageListDto>>>> GetAllUserManage([FromQuery] PaginationParameterDto pagination)
+        {
+            // Filter User Account
+            var userFilter = Builders<User>.Filter.Eq("IsAdmin", false) | Builders<User>.Filter.Eq("IsAdmin", BsonNull.Value);
+
+            if (pagination.SearchName != null)
+            {
+                userFilter = userFilter & Builders<User>.Filter.Regex("Name", new BsonRegularExpression(pagination.SearchName, "i"));
+            }
+
+            var skipPage = (pagination.PageNumber - 1) * pagination.PageSize;
+
+            // Get total User
+            (var totalUser, _) = (await _userRepo.FindManyAsync(filter: userFilter));
+
+            (_, var usersFromRepo) = await _userRepo.FindManyAsync(filter: userFilter, limit: pagination.PageSize, skip: skipPage);
+
+            var users = _mapper.Map<IEnumerable<UserManageListDto>>(usersFromRepo);
+
+            return Ok(new PaginationResponse<IEnumerable<UserManageListDto>>((Int32)totalUser, users));
         }
 
         [HttpPut("ban/{userId:length(24)}")]

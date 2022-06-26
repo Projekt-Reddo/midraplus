@@ -1,6 +1,7 @@
 using AutoMapper;
 using BoardService;
 using DrawService.Dtos;
+using DrawService.Models;
 using DrawService.Services;
 using Microsoft.AspNetCore.SignalR;
 using static DrawService.Helpers.Constant;
@@ -40,14 +41,7 @@ namespace DrawService.Hubs
         {
             _connections[Context.ConnectionId] = connection;
 
-            // Load old notes data & create temp note list for that user
-            await LoadNotesFromDb(connection.BoardId);
-
-            // Create new list to save shapes for that room
-            NewShapeList(connection.BoardId);
-
-            // Create new list to save notes for that room
-            NewNoteList(connection.BoardId);
+            await LoadBoardFromDb(connection.BoardId);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, connection.BoardId);
         }
@@ -108,7 +102,39 @@ namespace DrawService.Hubs
 
         #endregion
 
+        #region Mouse Moving
+
+        /// <summary>
+        /// Current online users mouse position
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="isMove"></param>
+        /// <returns></returns>
+        public async Task SendMouse(int x, int y, bool isMove)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveMouse, drawConnection.User.Id, drawConnection.User.Name, x, y, isMove);
+            }
+        }
+
+        #endregion
+
         #region Shape
+
+        /// <summary>
+        /// Handle load init shapes because cannot return Shapes when the first user join a board.
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
+        public async Task LoadInitShapes(string boardId)
+        {
+            if (_shapeList.TryGetValue(boardId, out ICollection<ShapeReadDto>? shapes))
+            {
+                await Clients.Caller.SendAsync(HubReturnMethod.ReceiveShape, _shapeList[boardId]);
+            }
+        }
 
         /// <summary>
         /// When user draw to board
@@ -127,6 +153,23 @@ namespace DrawService.Hubs
                 }
 
                 await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveShape, shape);
+            }
+        }
+
+        /// <summary>
+        /// Clear all data in board
+        /// </summary>
+        /// <returns></returns>
+        public async Task ClearAll()
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                if (await _grpcBoardClient.IsUserOwnBoard(drawConnection.BoardId, drawConnection.User.Id))
+                {
+                    await _grpcBoardClient.ClearBoard(drawConnection.BoardId);
+                    _shapeList[drawConnection.BoardId].Clear();
+                    await Clients.Group(drawConnection.BoardId).SendAsync(HubReturnMethod.ClearAll);
+                }
             }
         }
 
@@ -207,6 +250,44 @@ namespace DrawService.Hubs
 
         #endregion
 
+        #region Undo & Redo
+
+        /// <summary>
+        /// Undo method
+        /// </summary>
+        /// <param name="shapeId"></param>
+        /// <returns></returns>
+        public async Task Undo(string shapeId)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                _shapeList[drawConnection.BoardId] = _shapeList[drawConnection.BoardId].Where((s) => s.Id != shapeId).ToList();
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveUndo, shapeId);
+            }
+        }
+
+        /// <summary>
+        /// Redo method
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <returns></returns>
+        public async Task Redo(ShapeReadDto shape)
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? drawConnection))
+            {
+                var existShape = _shapeList[drawConnection.BoardId].FirstOrDefault(s => s.Id == shape.Id);
+
+                if (existShape is null)
+                {
+                    _shapeList[drawConnection.BoardId].Add(shape);
+                }
+
+                await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveShape, shape);
+            }
+        }
+
+        #endregion
+
         #region Database
 
         /// <summary>
@@ -216,8 +297,21 @@ namespace DrawService.Hubs
         /// <returns></returns>
         public async Task LoadBoardFromDb(string boardId)
         {
-            await LoadShapesFromDb(boardId);
-            await LoadNotesFromDb(boardId);
+            var connectionsOnABoard = _connections.Values.Where(x => x.BoardId == boardId);
+
+            if (connectionsOnABoard.Count() <= 1)
+            {
+                BoardReadDto board = await _grpcBoardClient.LoadBoardData(boardId);
+
+                if (board is not null)
+                {
+                    _noteList[boardId] = _mapper.Map<List<NoteReadDto>>(board.Notes);
+                    _shapeList[boardId] = _mapper.Map<List<ShapeReadDto>>(board.Shapes);
+                }
+            }
+
+            NewNoteList(boardId);
+            NewShapeList(boardId);
         }
 
         /// <summary>
@@ -225,12 +319,9 @@ namespace DrawService.Hubs
         /// </summary>
         /// <param name="boardId"></param>
         /// <returns></returns>
-        public async Task LoadShapesFromDb(string boardId)
+        public void LoadShapesFromDb(string boardId, List<ShapeReadDto> shapeList)
         {
-            if (!_shapeList.ContainsKey(boardId))
-            {
-                _shapeList[boardId] = new List<ShapeReadDto>();
-            }
+            _shapeList[boardId] = shapeList;
         }
 
         /// <summary>
@@ -238,12 +329,9 @@ namespace DrawService.Hubs
         /// </summary>
         /// <param name="boardId"></param>
         /// <returns></returns>
-        public async Task LoadNotesFromDb(string boardId)
+        public void LoadNotesFromDb(string boardId, List<NoteReadDto> shapeList)
         {
-            if (!_noteList.ContainsKey(boardId))
-            {
-                _noteList[boardId] = new List<NoteReadDto>();
-            }
+            _noteList[boardId] = shapeList;
         }
 
         /// <summary>

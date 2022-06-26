@@ -17,6 +17,8 @@ namespace BoardService.Profiles
             CreateMap<BoardUpdateDto, Board>();
 
             CreateMap<UserGrpc, User>();
+
+            CreateMap<Board, BoardLoadDataResponse>();
         }
     }
 }
