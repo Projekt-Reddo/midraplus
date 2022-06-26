@@ -88,7 +88,9 @@ namespace DrawService.Services
 
             _logger.LogInformation($"Load board - {boardId} with status {JsonConvert.SerializeObject(response)}");
 
-            return _mapper.Map<BoardReadDto>(response);
+            var returnedBoard = _mapper.Map<BoardReadDto>(response);
+
+            return returnedBoard;
         }
     }
 }
