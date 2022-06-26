@@ -15,7 +15,7 @@ namespace BoardService.Profiles
 
         public string? SerializeShapeDataToJson(string dataType, object data)
         {
-            var jsonData = Convert.ToString((dynamic)data);
+            // var jsonData = Convert.ToString((dynamic)data);
 
             if (dataType == ShapeDataType.LinePath)
             {
@@ -23,11 +23,11 @@ namespace BoardService.Profiles
             }
             else if (dataType == ShapeDataType.ErasedLinePath)
             {
-                return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<PathData>(jsonData));
+                return JsonConvert.SerializeObject(data);
             }
             else if (dataType == ShapeDataType.Text)
             {
-                return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<TextData>(jsonData));
+                return JsonConvert.SerializeObject(data);
             }
 
             return null;

@@ -17,19 +17,34 @@ namespace DrawService.Profiles
 
         public string? SerializeShapeDataToJson(string dataType, object data)
         {
-            var jsonData = Convert.ToString((dynamic)data);
+            // Get type of data instance
+            var type = data.GetType();
+            dynamic jsonData;
 
+            if (type.FullName == "System.Text.Json.JsonElement")
+            {
+                // Dynamic object
+                var temp = Convert.ToString((dynamic)data);
+                jsonData = JsonConvert.DeserializeObject<PathData>(temp);
+            }
+            else
+            {
+                // Have Type object
+                jsonData = data;
+            }
+
+            // Convert to Json
             if (dataType == ShapeDataType.LinePath)
             {
-                return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<PathData>(jsonData));
+                return JsonConvert.SerializeObject(jsonData);
             }
             else if (dataType == ShapeDataType.ErasedLinePath)
             {
-                return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<PathData>(jsonData));
+                return JsonConvert.SerializeObject(data);
             }
             else if (dataType == ShapeDataType.Text)
             {
-                return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<TextData>(jsonData));
+                return JsonConvert.SerializeObject(data);
             }
 
             return null;

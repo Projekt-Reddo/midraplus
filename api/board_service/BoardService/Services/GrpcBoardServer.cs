@@ -121,10 +121,13 @@ namespace BoardService.Services
                 boardFromRepo.Shapes = new List<Shape>();
             }
 
-            foreach (var shape in newShapes)
-            {
-                boardFromRepo.Shapes.Add(shape);
-            }
+            // Override old shapes
+            boardFromRepo.Shapes = newShapes;
+
+            // foreach (var shape in newShapes)
+            // {
+            //     boardFromRepo.Shapes.Add(shape);
+            // }
 
             // Add new notes
             var newNotes = _mapper.Map<List<Note>>(request.Notes);
@@ -134,10 +137,13 @@ namespace BoardService.Services
                 boardFromRepo.Notes = new List<Note>();
             }
 
-            foreach (var note in newNotes)
-            {
-                boardFromRepo.Notes.Add(note);
-            }
+            // Override old notes
+            boardFromRepo.Notes = newNotes;
+
+            // foreach (var note in newNotes)
+            // {
+            //     boardFromRepo.Notes.Add(note);
+            // }
 
             // Update last edit
             boardFromRepo.LastEdit = DateTime.Now;
