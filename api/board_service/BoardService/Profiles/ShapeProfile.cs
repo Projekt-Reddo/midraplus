@@ -9,7 +9,8 @@ namespace BoardService.Profiles
     {
         public ShapeProfile()
         {
-            CreateMap<ShapeGrpc, Shape>().ForMember(dest => dest.Data, opt => opt.MapFrom(src => DeserializeShapeDataFromJson(src.ClassName, src.Data)));
+            CreateMap<ShapeGrpc, Shape>().ForMember(dest => dest.Id, opt => opt.Ignore())
+                                        .ForMember(dest => dest.Data, opt => opt.MapFrom(src => DeserializeShapeDataFromJson(src.ClassName, src.Data)));
             CreateMap<Shape, ShapeGrpc>().ForMember(dest => dest.Data, opt => opt.MapFrom(src => SerializeShapeDataToJson(src.ClassName, (object)src.Data)));
         }
 
