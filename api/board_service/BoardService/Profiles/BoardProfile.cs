@@ -18,7 +18,7 @@ namespace BoardService.Profiles
 
             CreateMap<UserGrpc, User>();
 
-            CreateMap<Board, BoardLoadDataResponse>();
+            CreateMap<Board, BoardLoadDataResponse>().ForMember(dest => dest.BoardId, opt => opt.MapFrom(src => src.Id));
         }
     }
 }
