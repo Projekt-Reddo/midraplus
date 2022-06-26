@@ -50,7 +50,7 @@ jobs:
           # relative path to docker file (use this because I'm using custome Dockerfile name)
           file: ./api/account_service/account-svc.Dockerfile
           # Note: tags has to be all lower-case
-          tags: draplus/account-svc:v0.3.0
+          tags: draplus/account-svc:v0.4.0
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
 
@@ -96,7 +96,7 @@ jobs:
           # relative path to docker file (use this because I'm using custome Dockerfile name)
           file: ./api/admin_service/admin-svc.Dockerfile
           # Note: tags has to be all lower-case
-          tags: draplus/admin-svc:v0.3.0
+          tags: draplus/admin-svc:v0.4.0
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
 
@@ -142,7 +142,7 @@ jobs:
           # relative path to docker file (use this because I'm using custome Dockerfile name)
           file: ./api/board_service/board-svc.Dockerfile
           # Note: tags has to be all lower-case
-          tags: draplus/board-svc:v0.3.0
+          tags: draplus/board-svc:v0.4.0
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
 
@@ -188,7 +188,7 @@ jobs:
           # relative path to docker file (use this because I'm using custome Dockerfile name)
           file: ./api/draw_service/draw-svc.Dockerfile
           # Note: tags has to be all lower-case
-          tags: draplus/draw-svc:v0.3.0
+          tags: draplus/draw-svc:v0.4.0
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
 
