@@ -22,6 +22,69 @@ namespace BoardService.Services
             _boardRepo = boardRepo;
         }
 
+        public override async Task<ClearBoardResponse> ClearBoard(ClearBoardRequest request, ServerCallContext context)
+        {
+            var boardFromRepo = await _boardRepo.FindOneAsync(Builders<Board>.Filter.Eq(b => b.Id, request.BoardId));
+
+            if (boardFromRepo == null)
+            {
+                return new ClearBoardResponse
+                {
+                    Status = false,
+                    Message = "Board id not found"
+                };
+            }
+
+            boardFromRepo.Shapes = null!;
+            boardFromRepo.Notes = null!;
+
+            var rs = await _boardRepo.UpdateOneAsync(request.BoardId, boardFromRepo);
+
+            if (rs == false)
+            {
+                return new ClearBoardResponse()
+                {
+                    Status = false,
+                    Message = "Clear board fail!!!"
+                };
+            }
+
+            return new ClearBoardResponse()
+            {
+                Status = false,
+                Message = "All Shapes and Notes were cleared"
+            };
+        }
+
+        public override async Task<IsUserOwnBoardResponse> IsUserOwnBoard(IsUserOwnBoardRequest request, ServerCallContext context)
+        {
+            var boardFromRepo = await _boardRepo.FindOneAsync(Builders<Board>.Filter.Eq(b => b.Id, request.BoardId));
+
+            if (boardFromRepo == null)
+            {
+                return new IsUserOwnBoardResponse
+                {
+                    Status = false,
+                    Message = "Board id not found"
+                };
+            }
+
+            if (boardFromRepo.UserId == request.UserId)
+            {
+                return new IsUserOwnBoardResponse()
+                {
+                    Status = true,
+                    Message = "User is owner of board"
+                };
+            }
+
+            return new IsUserOwnBoardResponse()
+            {
+                Status = false,
+                Message = "User is not owner of board"
+            };
+        }
+
         public override async Task<BoardCreateResponse> AddBoard(BoardCreateRequest request, ServerCallContext context)
         {
             // Create new board
@@ -87,6 +150,15 @@ namespace BoardService.Services
                 Status = true,
                 Message = "Board data saved"
             };
+        }
+
+        public override async Task<BoardLoadDataResponse> LoadBoardData(BoardLoadDataRequest request, ServerCallContext context)
+        {
+            Board boardFromRepo = await _boardRepo.FindOneAsync(Builders<Board>.Filter.Eq(b => b.Id, request.BoardId));
+
+            BoardLoadDataResponse boardResult = _mapper.Map<BoardLoadDataResponse>(boardFromRepo);
+
+            return boardResult;
         }
     }
 }

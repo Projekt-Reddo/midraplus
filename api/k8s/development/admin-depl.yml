@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: admin-svc
-          image: draplus/admin-svc:v0.3.0
+          image: draplus/admin-svc:v0.4.0
           resources:
             limits:
               cpu: 500m
@@ -38,5 +38,5 @@ spec:
       targetPort: 5244
     - name: admin-grpc
       protocol: TCP
-      port: 666
-      targetPort: 666
+      port: 50051
+      targetPort: 50051

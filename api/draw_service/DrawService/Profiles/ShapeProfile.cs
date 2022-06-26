@@ -12,6 +12,7 @@ namespace DrawService.Profiles
         public ShapeProfile()
         {
             CreateMap<ShapeReadDto, ShapeGrpc>().ForMember(dest => dest.Data, opt => opt.MapFrom(src => SerializeShapeDataToJson(src.ClassName, (object)src.Data)));
+            CreateMap<ShapeGrpc, ShapeReadDto>().ForMember(dest => dest.Data, opt => opt.MapFrom(src => DeserializeShapeDataFromJson(src.Data, src.ClassName)));
         }
 
         public string? SerializeShapeDataToJson(string dataType, object data)
@@ -32,6 +33,26 @@ namespace DrawService.Profiles
             }
 
             return null;
+        }
+
+        public object? DeserializeShapeDataFromJson(string dataType, string value)
+        {
+            if (dataType == ShapeDataType.LinePath)
+            {
+                return JsonConvert.DeserializeObject<PathData>(value);
+            }
+            else if (dataType == ShapeDataType.ErasedLinePath)
+            {
+                return JsonConvert.DeserializeObject<PathData>(value);
+            }
+            else if (dataType == ShapeDataType.Text)
+            {
+                return JsonConvert.DeserializeObject<TextData>(value);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
