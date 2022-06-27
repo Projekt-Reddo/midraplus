@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 // SignalR
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IDictionary<string, DrawConnection>>(opt => new Dictionary<string, DrawConnection>());
+builder.Services.AddSingleton<IDictionary<string, DrawConnectionChat>>(opt => new Dictionary<string, DrawConnectionChat>());
+
 builder.Services.AddSingleton<IDictionary<string, ICollection<ShapeReadDto>>>(opt => new Dictionary<string, ICollection<ShapeReadDto>>());
 builder.Services.AddSingleton<IDictionary<string, List<NoteReadDto>>>(opt => new Dictionary<string, List<NoteReadDto>>());
 
