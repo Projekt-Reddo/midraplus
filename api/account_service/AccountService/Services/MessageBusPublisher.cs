@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using AccountService.Dtos;
 using RabbitMQ.Client;
 
@@ -19,8 +15,8 @@ namespace AccountService.Services
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<MessageBusPublisher> _logger;
-        private readonly IConnection _connection;
-        private readonly IModel _channel;
+        private readonly IConnection _connection = null!;
+        private readonly IModel _channel = null!;
 
 
         public MessageBusPublisher(IConfiguration configuration, ILogger<MessageBusPublisher> logger)
@@ -80,7 +76,7 @@ namespace AccountService.Services
         public void PublishAddSignIn()
         {
             // publish message increase signin count
-            var message = JsonSerializer.Serialize(new MessageAddSiginPublishDto { Event="AddSignIn"});
+            var message = JsonSerializer.Serialize(new MessageAddSiginPublishDto { Event = "AddSignIn" });
 
             _channel.BasicPublish(exchange: "trigger", routingKey: "", body: Encoding.UTF8.GetBytes(message));
 
