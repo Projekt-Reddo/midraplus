@@ -132,7 +132,7 @@ namespace DrawService.Hubs
         {
             if (_shapeList.TryGetValue(boardId, out ICollection<ShapeReadDto>? shapes))
             {
-                await Clients.Caller.SendAsync(HubReturnMethod.ReceiveShape, _shapeList[boardId]);
+                await Clients.Caller.SendAsync(HubReturnMethod.InitShapes, _shapeList[boardId]);
             }
         }
 
@@ -147,10 +147,10 @@ namespace DrawService.Hubs
             {
                 var existShape = _shapeList[drawConnection.BoardId].FirstOrDefault(s => s.Id == shape.Id);
 
-                if (existShape is null)
-                {
-                    _shapeList[drawConnection.BoardId].Add(shape);
-                }
+                // if (existShape is null)
+                // {
+                _shapeList[drawConnection.BoardId].Add(shape);
+                // }
 
                 await Clients.OthersInGroup(drawConnection.BoardId).SendAsync(HubReturnMethod.ReceiveShape, shape);
             }

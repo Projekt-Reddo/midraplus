@@ -11,6 +11,18 @@ namespace DrawService.Dtos
     }
 
     /// <summary>
+    /// Class store user information in draw
+    /// </summary>
+    public class ChatConnection
+    {
+        public UserConnectionInfo User { get; set; } = null!;
+
+        public string BoardId { get; set; } = null!;
+
+        public string Type = "Chat";
+    }
+
+    /// <summary>
     /// Store user information in connection list
     /// </summary>
     public class UserConnectionInfo

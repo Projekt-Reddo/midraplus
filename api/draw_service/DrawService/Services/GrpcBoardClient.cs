@@ -9,9 +9,35 @@ namespace DrawService.Services
 {
     public interface IGrpcBoardClient
     {
+        /// <summary>
+        /// Clear all shapes of that board
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
         Task<bool> ClearBoard(string boardId);
+
+        /// <summary>
+        /// Check request user is the owner of that board
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         Task<bool> IsUserOwnBoard(string boardId, string userId);
+
+        /// <summary>
+        /// Save shapes and notes to that board
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="shapes"></param>
+        /// <param name="notes"></param>
+        /// <returns></returns>
         Task<bool> SaveBoardData(string boardId, ICollection<ShapeGrpc> shapes, ICollection<NoteGrpc> notes);
+
+        /// <summary>
+        /// Load all shapes of that board from Board service
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
         Task<BoardReadDto> LoadBoardData(string boardId);
     }
 

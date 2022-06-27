@@ -132,7 +132,7 @@ export const signalRMiddleware = (storeAPI: any) => {
                 }
             );
 
-            connection.board.on("CurrentOnlineUser", (users: object[]) => {
+            connection.board.on("OnlineUsers", (users: object[]) => {
                 storeAPI.dispatch({
                     type: ONLINE_USERS,
                     payload: users,

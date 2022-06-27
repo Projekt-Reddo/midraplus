@@ -9,13 +9,14 @@ namespace BoardService.Profiles
     {
         public ShapeProfile()
         {
-            CreateMap<ShapeGrpc, Shape>().ForMember(dest => dest.Data, opt => opt.MapFrom(src => DeserializeShapeDataFromJson(src.ClassName, src.Data)));
+            CreateMap<ShapeGrpc, Shape>().ForMember(dest => dest.Id, opt => opt.Ignore())
+                                        .ForMember(dest => dest.Data, opt => opt.MapFrom(src => DeserializeShapeDataFromJson(src.ClassName, src.Data)));
             CreateMap<Shape, ShapeGrpc>().ForMember(dest => dest.Data, opt => opt.MapFrom(src => SerializeShapeDataToJson(src.ClassName, (object)src.Data)));
         }
 
         public string? SerializeShapeDataToJson(string dataType, object data)
         {
-            var jsonData = Convert.ToString((dynamic)data);
+            // var jsonData = Convert.ToString((dynamic)data);
 
             if (dataType == ShapeDataType.LinePath)
             {
@@ -23,11 +24,11 @@ namespace BoardService.Profiles
             }
             else if (dataType == ShapeDataType.ErasedLinePath)
             {
-                return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<PathData>(jsonData));
+                return JsonConvert.SerializeObject(data);
             }
             else if (dataType == ShapeDataType.Text)
             {
-                return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<TextData>(jsonData));
+                return JsonConvert.SerializeObject(data);
             }
 
             return null;
