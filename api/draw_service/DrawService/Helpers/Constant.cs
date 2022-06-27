@@ -15,6 +15,7 @@ namespace DrawService.Helpers
             public const string ClearAll = "ClearAll";
             public const string ReceiveUndo = "ReceiveUndo";
             public const string ReceiveRedo = "ReceiveRedo";
+            public const string InitShapes = "InitShapes";
         }
 
         public static class ShapeDataType

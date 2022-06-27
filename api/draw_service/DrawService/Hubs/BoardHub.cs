@@ -132,7 +132,7 @@ namespace DrawService.Hubs
         {
             if (_shapeList.TryGetValue(boardId, out ICollection<ShapeReadDto>? shapes))
             {
-                await Clients.Caller.SendAsync(HubReturnMethod.ReceiveShape, _shapeList[boardId]);
+                await Clients.Caller.SendAsync(HubReturnMethod.InitShapes, _shapeList[boardId]);
             }
         }
 

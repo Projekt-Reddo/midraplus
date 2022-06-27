@@ -14,7 +14,7 @@ spec:
         spec:
             containers:
                 - name: draw-svc
-                  image: draplus/draw-svc:v0.4.3
+                  image: draplus/draw-svc:v0.4.5
                   resources:
                       limits:
                           cpu: "1"
