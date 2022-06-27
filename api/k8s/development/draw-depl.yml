@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: draw-depl
+    name: draw-depl
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: draw-svc
-  template:
-    metadata:
-      labels:
-        app: draw-svc
-    spec:
-      containers:
-        - name: draw-svc
-          image: draplus/draw-svc:v0.4.2
-          resources:
-            limits:
-              cpu: "1"
-              memory: "1Gi"
-            requests:
-              cpu: "1"
-              memory: "1Gi"
+    replicas: 1
+    selector:
+        matchLabels:
+            app: draw-svc
+    template:
+        metadata:
+            labels:
+                app: draw-svc
+        spec:
+            containers:
+                - name: draw-svc
+                  image: draplus/draw-svc:v0.4.5
+                  resources:
+                      limits:
+                          cpu: "1"
+                          memory: "1Gi"
+                      requests:
+                          cpu: "1"
+                          memory: "1Gi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: draw-clusterip-svc
+    name: draw-clusterip-svc
 spec:
-  type: ClusterIP
-  selector:
-    app: draw-svc
-  ports:
-    - name: draw-svc
-      protocol: TCP
-      port: 5284
-      targetPort: 5284
+    type: ClusterIP
+    selector:
+        app: draw-svc
+    ports:
+        - name: draw-svc
+          protocol: TCP
+          port: 5284
+          targetPort: 5284

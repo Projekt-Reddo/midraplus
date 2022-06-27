@@ -91,12 +91,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Show swagger
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapGrpcReflectionService();
-}
 
-app.UseHttpsRedirection();
+    // Allow grpcui get grpc service
+    app.MapGrpcReflectionService();
+
+    // Redirect only in dev
+    app.UseHttpsRedirection();
+}
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
@@ -122,7 +126,6 @@ app.Use(async (context, next) =>
         await context.Response.WriteAsync(JsonConvert.SerializeObject(new ResponseDto(403), new JsonSerializerSettings { ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() }));
     }
 });
-
 
 app.UseAuthentication();
 
