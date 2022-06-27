@@ -8,8 +8,8 @@ namespace DrawService.Hubs
     public class ChatHub : Hub
     {
         private readonly string _botUser;
-        private readonly IDictionary<string, DrawConnection> _connections;
-        public ChatHub(IDictionary<string, DrawConnection> connections)
+        private readonly IDictionary<string, DrawConnectionChat> _connections;
+        public ChatHub(IDictionary<string, DrawConnectionChat> connections)
         {
             _botUser = "What I'm I doing here?";
             _connections = connections;
@@ -22,7 +22,7 @@ namespace DrawService.Hubs
         /// </summary>
         /// <param name="drawConnection"></param>
         /// <returns></returns>
-        public async Task JoinRoom(DrawConnection drawConnection)
+        public async Task JoinRoom(DrawConnectionChat drawConnection)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, drawConnection.BoardId);
 
@@ -56,7 +56,7 @@ namespace DrawService.Hubs
         /// <returns></returns>
         private async Task HandleUserLeaveRoom()
         {
-            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? userConnection))
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnectionChat? userConnection))
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, userConnection.BoardId);
 
@@ -76,7 +76,7 @@ namespace DrawService.Hubs
         /// <returns></returns>
         public async Task SendMessage(UserConnectionInfo user, string message)
         {
-            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnection? userConnection))
+            if (_connections.TryGetValue(Context.ConnectionId, out DrawConnectionChat? userConnection))
             {
                 await Clients.Group(userConnection.BoardId).SendAsync(HubReturnMethod.ReceiveMessage, user, message, DateTime.Now);
             }
