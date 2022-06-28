@@ -23,6 +23,9 @@ builder.Services.AddSingleton<IDictionary<string, List<NoteReadDto>>>(opt => new
 // Auto mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// alows CORS
+builder.Services.AddCors();
+
 // Grpc Clients
 builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
 
@@ -63,7 +66,14 @@ var app = builder.Build();
 //     app.UseSwaggerUI();
 // }
 
+// Cause error when using nginx
 // app.UseHttpsRedirection();
+
+// cors has to be on top of all
+app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials());
 
 app.UseAuthentication();
 
