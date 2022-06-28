@@ -27,7 +27,7 @@ builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<ISignInRepo, SignInRepo>();
 
 // alows CORS
-//builder.Services.AddCors();
+builder.Services.AddCors();
 
 // Authentication
 ConfigurationManager configuration = builder.Configuration;
