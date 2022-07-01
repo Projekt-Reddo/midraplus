@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option csharp_namespace = "BoardService";
+import "google/protobuf/timestamp.proto";
 
 service GrpcBoard {
     rpc ClearBoard (ClearBoardRequest) returns (ClearBoardResponse) {}
@@ -8,6 +9,7 @@ service GrpcBoard {
     rpc AddBoard(BoardCreateRequest) returns (BoardCreateResponse) {}
     rpc SaveBoardData(BoardDataRequest) returns (BoardDataResponse) {}
     rpc LoadBoardData(BoardLoadDataRequest) returns (BoardLoadDataResponse) {}
+    rpc LoadBoardListByTime(BoardLoadByTimeRequest) returns (BoardLoadByTimeResponse) {}
 }
 
 // #region IsUserOwnBoardRequest
@@ -88,6 +90,24 @@ message BoardLoadDataResponse {
     string boardId = 1;
     repeated ShapeGrpc shapes = 2;
     repeated NoteGrpc notes = 3;
+}
+
+// #endregion
+
+// #region Board by time
+
+message BoardLoadByTimeRequest {
+    google.protobuf.Timestamp startDate = 1;
+    google.protobuf.Timestamp endDate = 2;
+}
+
+message BoardLoadByTimeGrpc {
+    string id = 1;
+    google.protobuf.Timestamp createdAt = 2;
+}
+
+message BoardLoadByTimeResponse {
+    repeated BoardLoadByTimeGrpc boardList = 1;
 }
 
 // #endregion
