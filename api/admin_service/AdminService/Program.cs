@@ -51,6 +51,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 // Authorization
 builder.Services.AddAuthorization();
 
+// Grpc Client
+builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
+
 // Grpc Server
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
