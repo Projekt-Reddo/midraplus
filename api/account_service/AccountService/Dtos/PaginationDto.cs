@@ -4,7 +4,7 @@ namespace AccountService.Dtos
     {
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
-        public string SearchName { get; set; } = "";
+        public string? SearchName { get; set; } = "";
     }
 
     public class PaginationResponse<T>
