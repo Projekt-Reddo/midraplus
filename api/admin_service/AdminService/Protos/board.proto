@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "BoardService";
+import "google/protobuf/timestamp.proto";
+
+service GrpcBoard {
+    rpc LoadBoardListByTime(BoardLoadByTimeRequest) returns (BoardLoadByTimeResponse) {}
+}
+
+// #region Shapes & Note SaveRequest
+
+message BoardLoadByTimeRequest {
+    google.protobuf.Timestamp startDate = 1;
+    google.protobuf.Timestamp endDate = 2;
+}
+
+message BoardLoadByTimeGrpc {
+    string id = 1;
+    google.protobuf.Timestamp createdAt = 2;
+}
+
+message BoardLoadByTimeResponse {
+    repeated BoardLoadByTimeGrpc boardList = 1;
+}
+
+// #endregion

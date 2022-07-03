@@ -3,6 +3,7 @@ using AutoMapper;
 using BoardService.Data;
 using BoardService.Models;
 using MongoDB.Driver;
+using BoardService.Dtos;
 
 namespace BoardService.Services
 {
@@ -165,6 +166,22 @@ namespace BoardService.Services
             BoardLoadDataResponse boardResult = _mapper.Map<BoardLoadDataResponse>(boardFromRepo);
 
             return boardResult;
+        }
+        public override async Task<BoardLoadByTimeResponse> LoadBoardListByTime(BoardLoadByTimeRequest request, ServerCallContext context)
+        {
+            BoardLoadByTime requestBoard = _mapper.Map<BoardLoadByTime>(request);
+
+            var filter = Builders<Board>.Filter.Gte("CreatedAt", requestBoard.StartDate) & Builders<Board>.Filter.Lte("CreatedAt", requestBoard.EndDate);
+
+            (_, IEnumerable<Board> boardFromrepo) = await _boardRepo.FindManyAsync(filter: filter);
+
+            List<BoardLoadByTimeGrpc> boardToReturn = _mapper.Map<List<BoardLoadByTimeGrpc>>(boardFromrepo);
+
+            var rs = new BoardLoadByTimeResponse();
+
+            rs.BoardList.AddRange(boardToReturn);
+
+            return rs;
         }
     }
 }
