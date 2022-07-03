@@ -17,11 +17,11 @@ spec:
           image: draplus/draw-svc:v0.4.5
           resources:
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: 900m
+              memory: "900Mi"
             requests:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: 750m
+              memory: "750Mi"
       dnsPolicy: Default
 ---
 apiVersion: v1

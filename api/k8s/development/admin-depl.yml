@@ -17,8 +17,8 @@ spec:
           image: draplus/admin-svc:v0.5.0-beta
           resources:
             limits:
-              cpu: 500m
-              memory: "500Mi"
+              cpu: 250m
+              memory: "250Mi"
             requests:
               cpu: 250m
               memory: "250Mi"
