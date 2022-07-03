@@ -22,6 +22,7 @@ spec:
             requests:
               cpu: 250m
               memory: "250Mi"
+      dnsPolicy: Default
 ---
 apiVersion: v1
 kind: Service
