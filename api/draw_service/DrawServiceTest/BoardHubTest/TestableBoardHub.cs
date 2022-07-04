@@ -4,10 +4,11 @@ using DrawService.Dtos;
 using DrawService.Services;
 using Moq;
 using NUnit.Framework;
+using SignalR_UnitTestingSupport.Hubs;
 
 namespace DrawServiceTest.BoardHubTest
 {
-    public class TestableBoardHub
+    public class TestableBoardHub : HubUnitTestsBase
     {
         public Mock<IDictionary<string, DrawConnection>> mockConnections { get; set; } = null!;
         public Mock<IMapper> mockMapper { get; set; } = null!;
