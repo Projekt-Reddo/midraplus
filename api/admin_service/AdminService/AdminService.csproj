@@ -25,6 +25,7 @@
     <Protobuf Include="Protos\sigin.proto" GrpcService="Server" />
     <!-- Grpc Client -->
     <Protobuf Include="Protos\board.proto" GrpcService="Client" />
+    <Protobuf Include="Protos\user.proto" GrpcService="Client" />
   </ItemGroup>
 
 </Project>

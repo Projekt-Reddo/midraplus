@@ -9,6 +9,7 @@ namespace AdminService.Services
     public interface IGrpcBoardClient
     {
         List<BoardLoadByTime> LoadBoardListByTime(DateTime startDate, DateTime endDate);
+        TotalBoardsRespone GetTotalBoards();
     }
 
     public class GrpcBoardClient : IGrpcBoardClient
@@ -54,6 +55,20 @@ namespace AdminService.Services
                 _logger.LogError(ex, $"Error while getting board from {startDate} to {endDate}");
                 return null;
             }
+        }
+        public TotalBoardsRespone GetTotalBoards()
+        {
+            try
+            {
+                var response = _client.GetTotalBoard(new GetTotalBoardsRequest());
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error while getting total boards");
+                return null;
+            }
+            
         }
     }
 }
