@@ -25,6 +25,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Repository
 builder.Services.AddSingleton<IBoardRepo, BoardRepo>();
 
+// alows CORS
+builder.Services.AddCors();
+
 // RabbitMQ Subscriber
 builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 builder.Services.AddHostedService<MessageBusSubscriber>();
@@ -97,10 +100,16 @@ if (app.Environment.IsDevelopment())
 
     // Allow grpcui get grpc service
     app.MapGrpcReflectionService();
-
-    // Redirect only in dev
-    app.UseHttpsRedirection();
 }
+
+// Cause error when using nginx
+//app.UseHttpsRedirection();
+
+// cors has to be on top of all
+app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials());
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
