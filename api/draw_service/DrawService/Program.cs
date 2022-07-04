@@ -10,12 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // SignalR
 builder.Services.AddSignalR();
+
+// Store users connected to the board
 builder.Services.AddSingleton<IDictionary<string, DrawConnection>>(opt => new Dictionary<string, DrawConnection>());
+// Store users connected to the chat
+builder.Services.AddSingleton<IDictionary<string, ChatConnection>>(opt => new Dictionary<string, ChatConnection>());
+// Dict between Room: Shapes of rooms
 builder.Services.AddSingleton<IDictionary<string, ICollection<ShapeReadDto>>>(opt => new Dictionary<string, ICollection<ShapeReadDto>>());
+// Dict between Room: Notes of rooms
 builder.Services.AddSingleton<IDictionary<string, List<NoteReadDto>>>(opt => new Dictionary<string, List<NoteReadDto>>());
 
 // Auto mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// alows CORS
+builder.Services.AddCors();
 
 // Grpc Clients
 builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
@@ -57,15 +66,25 @@ var app = builder.Build();
 //     app.UseSwaggerUI();
 // }
 
-app.UseHttpsRedirection();
+// Cause error when using nginx
+// app.UseHttpsRedirection();
+
+// cors has to be on top of all
+app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials());
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
 // app.MapControllers();
 
-// SignalR
+// SignalR endpoints
 app.MapHub<BoardHub>("/board");
 app.MapHub<ChatHub>("/chat");
+
 app.Run();
 
 #endregion

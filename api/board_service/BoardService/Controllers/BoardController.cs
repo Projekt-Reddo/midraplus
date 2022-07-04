@@ -92,7 +92,7 @@ namespace BoardService.Controllers
             var createdBoard = await _boardRepo.AddOneAsync(new Board
             {
                 UserId = boardCreateDto.UserId,
-                Name = user.Name,
+                Name = DateTime.Now.ToString("MMMM dd yyyy"),
             });
 
             return Ok(new ResponseDto(200, "Board created"));

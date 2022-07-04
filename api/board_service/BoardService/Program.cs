@@ -25,6 +25,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Repository
 builder.Services.AddSingleton<IBoardRepo, BoardRepo>();
 
+// alows CORS
+builder.Services.AddCors();
+
 // RabbitMQ Subscriber
 builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 builder.Services.AddHostedService<MessageBusSubscriber>();
@@ -91,12 +94,22 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Show swagger
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // Allow grpcui get grpc service
     app.MapGrpcReflectionService();
 }
 
-app.UseHttpsRedirection();
+// Cause error when using nginx
+//app.UseHttpsRedirection();
+
+// cors has to be on top of all
+app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials());
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
@@ -122,7 +135,6 @@ app.Use(async (context, next) =>
         await context.Response.WriteAsync(JsonConvert.SerializeObject(new ResponseDto(403), new JsonSerializerSettings { ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() }));
     }
 });
-
 
 app.UseAuthentication();
 

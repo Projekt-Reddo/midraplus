@@ -26,7 +26,7 @@ const LoginButton: React.FC<LoginButtonProps> = ({ googleResponse }) => {
                 buttonText="Google Login"
                 render={(renderProps) => (
                     <button onClick={renderProps.onClick} style={styles}>
-                        <div className="google-btn border-rounded">
+                        <div className="google-btn border-rounded hover:bg-blue-600">
                             <div className="google-icon-wrapper border-rounded">
                                 <img
                                     className="google-icon"

@@ -28,4 +28,10 @@ namespace BoardService.Dtos
         public string Id { get; set; } = null!;
         public string Name { get; set; } = null!;
     }
+
+    public class BoardLoadByTime
+    {
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
 }

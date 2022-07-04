@@ -29,6 +29,8 @@ builder.Services.AddSingleton<ISignInRepo, SignInRepo>();
 builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 builder.Services.AddHostedService<MessageBusSubscriber>();
 
+// alows CORS
+builder.Services.AddCors();
 
 // Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
@@ -48,6 +50,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 // Authorization
 builder.Services.AddAuthorization();
+
+// Grpc Client
+builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
 
 // Grpc Server
 builder.Services.AddGrpc();
@@ -96,7 +101,14 @@ if (app.Environment.IsDevelopment())
     app.MapGrpcReflectionService();
 }
 
-app.UseHttpsRedirection();
+// Cause error when using nginx
+// app.UseHttpsRedirection();
+
+// Cors has to be on top of all
+app.UseCors(opt => opt.WithOrigins(builder.Configuration.GetSection("FrontendUrl").Get<string[]>())
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials());
 
 app.UseExceptionHandler(e => e.Run(async context =>
 {
