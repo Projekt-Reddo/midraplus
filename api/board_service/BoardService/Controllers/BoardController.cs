@@ -91,7 +91,7 @@ namespace BoardService.Controllers
 
             if (rs == false)
             {
-                return BadRequest(new ResponseDto(404, "Board not found"));
+                return NotFound(new ResponseDto(404, "Board not found"));
             }
 
             return Ok(new ResponseDto(200, "Board deleted"));
