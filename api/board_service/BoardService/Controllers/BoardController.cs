@@ -72,7 +72,7 @@ namespace BoardService.Controllers
             var createdBoard = await _boardRepo.AddOneAsync(new Board
             {
                 UserId = boardCreateDto.UserId,
-                Name = user.Name,
+                Name = DateTime.Now.ToString("MMMM dd yyyy"),
             });
 
             return Ok(new ResponseDto(200, "Board created"));
@@ -91,7 +91,7 @@ namespace BoardService.Controllers
 
             if (rs == false)
             {
-                return BadRequest(new ResponseDto(404, "Board not found"));
+                return NotFound(new ResponseDto(404, "Board not found"));
             }
 
             return Ok(new ResponseDto(200, "Board deleted"));
