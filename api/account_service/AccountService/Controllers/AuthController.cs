@@ -38,7 +38,6 @@ namespace AccountService.Controllers
         /// </summary>
         /// <param name="userView">user info for login/signup for google account</param>
         /// <returns>200 / 400 / 404</returns>
-        [HttpPost]
         [HttpPost("google")]
         public async Task<IActionResult> Google([FromBody] UserView userView)
         {
