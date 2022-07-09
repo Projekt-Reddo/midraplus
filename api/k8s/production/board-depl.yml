@@ -17,11 +17,11 @@ spec:
           image: draplus/board-svc:v0.5.0
           resources:
             limits:
-              cpu: 750m
-              memory: "1000Mi"
+              cpu: 400m
+              memory: "1Gi"
             requests:
-              cpu: 500m
-              memory: "500Mi"
+              cpu: 250m
+              memory: "750Mi"
 ---
 apiVersion: v1
 kind: Service
