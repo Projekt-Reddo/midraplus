@@ -23,14 +23,8 @@
   <ItemGroup>
     <!-- Grpc Server -->
     <Protobuf Include="Protos\sigin.proto" GrpcService="Server" />
-<<<<<<< Updated upstream
     <!-- Grpc Client -->
     <Protobuf Include="Protos\board.proto" GrpcService="Client" />
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> d1bfab64153efc8690f88ad49e004ef604cd7042
     <Protobuf Include="Protos\user.proto" GrpcService="Client" />
   </ItemGroup>
 
