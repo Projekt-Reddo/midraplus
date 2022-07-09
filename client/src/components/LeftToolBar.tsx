@@ -81,6 +81,7 @@ const LeftToolBar: React.FC<LeftToolBarProps> = ({ onClick }) => {
 
     // Clear canvas
     const handleClear = (lc: any) => {
+        setClearrAllOption(false);
         dispatch({
             type: CLEAR_ALL,
         });
@@ -319,22 +320,18 @@ const LeftToolBar: React.FC<LeftToolBarProps> = ({ onClick }) => {
             <div
                 className={` ${
                     clearAllOption
-                        ? "app-shadow clearAllBoard absolute justify-center flex z-10"
+                        ? "app-shadow clearAllBoard absolute justify-center flex z-10 cursor-pointer"
                         : "clearAllBoardHide"
                 }`}
                 ref={wrapperRef2}
-                onClick={onClick}
+                onClick={(e) => {
+                    onClick(e);
+                    handleClear(initLC);
+                }}
             >
                 <div className="flex justify-center items-center px-3">
-                    <Icon
-                        icon="trash"
-                        size="xl"
-                        className="mr-2"
-                        onClick={() => {
-                            handleClear(initLC);
-                        }}
-                    />
-                    <p>Clear Canvas</p>
+                    <Icon icon="trash" size="xl" className="mr-2" />
+                    Clear Canvas
                 </div>
             </div>
             {/* Undo, Redo, Export */}

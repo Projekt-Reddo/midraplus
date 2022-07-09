@@ -9,7 +9,7 @@ namespace DrawService.Profiles
     {
         public BoardProfile()
         {
-            CreateMap<BoardLoadDataResponse, BoardReadDto>();
+            CreateMap<BoardLoadDataResponse, BoardReadDto>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.BoardId));
         }
     }
 }

@@ -3,6 +3,7 @@ using AutoMapper;
 using BoardService.Data;
 using BoardService.Models;
 using MongoDB.Driver;
+using BoardService.Dtos;
 
 namespace BoardService.Services
 {
@@ -121,10 +122,13 @@ namespace BoardService.Services
                 boardFromRepo.Shapes = new List<Shape>();
             }
 
-            foreach (var shape in newShapes)
-            {
-                boardFromRepo.Shapes.Add(shape);
-            }
+            // Override old shapes
+            boardFromRepo.Shapes = newShapes;
+
+            // foreach (var shape in newShapes)
+            // {
+            //     boardFromRepo.Shapes.Add(shape);
+            // }
 
             // Add new notes
             var newNotes = _mapper.Map<List<Note>>(request.Notes);
@@ -134,10 +138,13 @@ namespace BoardService.Services
                 boardFromRepo.Notes = new List<Note>();
             }
 
-            foreach (var note in newNotes)
-            {
-                boardFromRepo.Notes.Add(note);
-            }
+            // Override old notes
+            boardFromRepo.Notes = newNotes;
+
+            // foreach (var note in newNotes)
+            // {
+            //     boardFromRepo.Notes.Add(note);
+            // }
 
             // Update last edit
             boardFromRepo.LastEdit = DateTime.Now;
@@ -159,6 +166,38 @@ namespace BoardService.Services
             BoardLoadDataResponse boardResult = _mapper.Map<BoardLoadDataResponse>(boardFromRepo);
 
             return boardResult;
+        }
+        public override async Task<BoardLoadByTimeResponse> LoadBoardListByTime(BoardLoadByTimeRequest request, ServerCallContext context)
+        {
+            BoardLoadByTime requestBoard = _mapper.Map<BoardLoadByTime>(request);
+
+            var filter = Builders<Board>.Filter.Gte("CreatedAt", requestBoard.StartDate) & Builders<Board>.Filter.Lte("CreatedAt", requestBoard.EndDate);
+
+            (_, IEnumerable<Board> boardFromrepo) = await _boardRepo.FindManyAsync(filter: filter);
+
+            List<BoardLoadByTimeGrpc> boardToReturn = _mapper.Map<List<BoardLoadByTimeGrpc>>(boardFromrepo);
+
+            var rs = new BoardLoadByTimeResponse();
+
+            rs.BoardList.AddRange(boardToReturn);
+
+            return rs;
+        }
+
+        public override async Task<TotalBoardsRespone> GetTotalBoard(GetTotalBoardsRequest request,ServerCallContext context )
+        {
+            var total = await _boardRepo.FindManyAsync();
+            var totalreturn = total.total;
+            var filterNewBoard = Builders<Board>.Filter.Gt("CreatedAt", DateTime.Now.AddDays(-7));
+            var total7 = await _boardRepo.FindManyAsync(filterNewBoard);
+
+            TotalBoardsRespone returnValue = new TotalBoardsRespone
+            {
+                Total = Convert.ToInt32(total.total),
+                Boards7Days = Convert.ToInt32(total7.total)
+            };
+
+            return returnValue;
         }
     }
 }

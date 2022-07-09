@@ -10,9 +10,9 @@ namespace BoardService.Services
         private readonly ILogger<MessageBusSubscriber> _logger;
         private readonly IConfiguration _configuration;
         private readonly IEventProcessor _eventProcessor;
-        private readonly IConnection _connection;
-        private readonly IModel _channel;
-        private readonly string _queueName;
+        private readonly IConnection _connection = null!;
+        private readonly IModel _channel = null!;
+        private readonly string _queueName = null!;
 
         public MessageBusSubscriber(IConfiguration configuration, ILogger<MessageBusSubscriber> logger, IEventProcessor eventProcessor)
         {

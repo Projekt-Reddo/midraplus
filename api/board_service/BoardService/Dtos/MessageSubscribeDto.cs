@@ -3,9 +3,10 @@
     public class MessageCreateBoardSubscribeDto
     {
         // user's Id
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Event { get; set; }
+        public string Id { get; set; } = null!;
 
+        public string Name { get; set; } = null!;
+
+        public string Event { get; set; } = null!;
     }
 }

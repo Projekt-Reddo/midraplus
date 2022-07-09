@@ -72,7 +72,7 @@ namespace BoardService.Controllers
             var createdBoard = await _boardRepo.AddOneAsync(new Board
             {
                 UserId = boardCreateDto.UserId,
-                Name = user.Name,
+                Name = DateTime.Now.ToString("MMMM dd yyyy"),
             });
 
             return Ok(new ResponseDto(200, "Board created"));
@@ -91,7 +91,7 @@ namespace BoardService.Controllers
 
             if (rs == false)
             {
-                return BadRequest(new ResponseDto(404, "Board not found"));
+                return NotFound(new ResponseDto(404, "Board not found"));
             }
 
             return Ok(new ResponseDto(200, "Board deleted"));
@@ -109,14 +109,14 @@ namespace BoardService.Controllers
             var board = await _boardRepo.FindOneAsync(Builders<Board>.Filter.Eq("Id", id));
             if (board == null)
             {
-                return NotFound(new ResponseDto(400, "Board not found"));
+                return NotFound(new ResponseDto(404, "Board not found"));
             }
             board.Name = boardUpdateDto.Name;
             var rs = await _boardRepo.UpdateOneAsync(id, board);
 
             if (rs == false)
             {
-                return BadRequest(new ResponseDto(404, "Change board name failed"));
+                return BadRequest(new ResponseDto(400, "Change board name failed"));
             }
 
             return Ok(new ResponseDto(200, "Board Name Updated"));
