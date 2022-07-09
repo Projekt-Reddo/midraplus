@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: account-svc
-          image: draplus/account-svc:v0.5.0
+          image: draplus/account-svc:v0.6.0-alpha
           resources:
             limits:
               cpu: 400m
