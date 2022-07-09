@@ -14,11 +14,11 @@ spec:
     spec:
       containers:
         - name: account-svc
-          image: draplus/account-svc:v1.0.0
+          image: draplus/account-svc:v0.5.0
           resources:
             limits:
-              cpu: 500m
-              memory: "500Mi"
+              cpu: 300m
+              memory: "300Mi"
             requests:
               cpu: 250m
               memory: "250Mi"

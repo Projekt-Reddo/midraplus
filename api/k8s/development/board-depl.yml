@@ -17,12 +17,11 @@ spec:
           image: draplus/board-svc:v0.5.0-beta
           resources:
             limits:
-              cpu: 300m
-              memory: "300Mi"
+              cpu: 500m
+              memory: "500Mi"
             requests:
               cpu: 250m
               memory: "250Mi"
-      dnsPolicy: Default
 ---
 apiVersion: v1
 kind: Service

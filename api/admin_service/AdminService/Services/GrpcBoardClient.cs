@@ -26,12 +26,10 @@ namespace AdminService.Services
             _mapper = mapper;
             _logger = logger;
 
-            string artistServerUrl = _configuration.GetValue<string>("Grpc:Boards");
+            string artistServerUrl = _configuration.GetValue<string>("Grpc:Board");
 
             var channel = GrpcChannel.ForAddress(artistServerUrl);
             _client = new GrpcBoard.GrpcBoardClient(channel);
-
-            _logger.LogInformation($"Connected to ArtistsServer with {artistServerUrl}");
         }
 
         public List<BoardLoadByTime> LoadBoardListByTime(DateTime startDate, DateTime endDate)
@@ -68,7 +66,11 @@ namespace AdminService.Services
                 _logger.LogError(ex, $"Error while getting total boards");
                 return null;
             }
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> d1bfab64153efc8690f88ad49e004ef604cd7042
         }
     }
 }

@@ -31,8 +31,5 @@ message GetTotalAccountRequest{
 
 message TotalAccountRespone{
     int32 total = 1;
-<<<<<<< Updated upstream
     int32 account7days = 2;
-=======
->>>>>>> Stashed changes
 }
