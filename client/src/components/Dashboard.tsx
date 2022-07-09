@@ -66,10 +66,10 @@ const Details: React.FC<DashboardDetailProps> = () => {
     });
 
     const { isFetching, data, refetch } = useQuery(
-        "dashboard",
+        "Sumarize",
         async () => {
             const { data } = await axios.get(
-                `${API}/api/admin/dashboard/detail`
+                `${API}/api/admin/dashboard/Sumarize`
             );
             setSample(data);
             return data;

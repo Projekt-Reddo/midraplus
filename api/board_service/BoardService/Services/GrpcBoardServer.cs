@@ -183,5 +183,21 @@ namespace BoardService.Services
 
             return rs;
         }
+
+        public override async Task<TotalBoardsRespone> GetTotalBoard(GetTotalBoardsRequest request,ServerCallContext context )
+        {
+            var total = await _boardRepo.FindManyAsync();
+            var totalreturn = total.total;
+            var filterNewBoard = Builders<Board>.Filter.Gt("CreatedAt", DateTime.Now.AddDays(-7));
+            var total7 = await _boardRepo.FindManyAsync(filterNewBoard);
+
+            TotalBoardsRespone returnValue = new TotalBoardsRespone
+            {
+                Total = Convert.ToInt32(total.total),
+                Boards7Days = Convert.ToInt32(total7.total)
+            };
+
+            return returnValue;
+        }
     }
 }

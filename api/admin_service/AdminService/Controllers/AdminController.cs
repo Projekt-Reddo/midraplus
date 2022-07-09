@@ -12,13 +12,35 @@ namespace AdminService.Controllers
     public class AdminController : ControllerBase
     {
         public ISignInRepo _signInRepo { get; }
+        private readonly IGrpcUserClient _grpcUserClient;
 
         private readonly IGrpcBoardClient _grpcBoardClient;
 
-        public AdminController(ISignInRepo signInRepo, IGrpcBoardClient grpcBoardClient)
+        public AdminController(ISignInRepo signInRepo, IGrpcBoardClient grpcBoardClient, IGrpcUserClient grpcUserClient)
         {
             _signInRepo = signInRepo;
             _grpcBoardClient = grpcBoardClient;
+            _grpcUserClient = grpcUserClient;
+        }
+        /// <summary>
+        /// Get Dashboard
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("dashboard/Sumarize")]
+        public async Task<ActionResult<SumarizeDto>> GetDashboardDetails()
+        {
+            var userList = _grpcUserClient.GetTotalAccount();
+            var totalMem = userList.Total;
+            var boardList = _grpcBoardClient.GetTotalBoards();
+
+            SumarizeDto returnValue = new SumarizeDto
+            {
+                NewAccount = userList.Account7Days,
+                NewBoard = boardList.Total,
+                TotalAccount = totalMem,
+                TotalBoard = boardList.Boards7Days,
+            };
+            return Ok(returnValue);
         }
 
         [HttpGet("dashboard/bar/{kindOfTime}")]

@@ -4,10 +4,98 @@ option csharp_namespace = "BoardService";
 import "google/protobuf/timestamp.proto";
 
 service GrpcBoard {
+    rpc ClearBoard (ClearBoardRequest) returns (ClearBoardResponse) {}
+    rpc IsUserOwnBoard(IsUserOwnBoardRequest) returns (IsUserOwnBoardResponse) {}
+    rpc AddBoard(BoardCreateRequest) returns (BoardCreateResponse) {}
+    rpc SaveBoardData(BoardDataRequest) returns (BoardDataResponse) {}
+    rpc LoadBoardData(BoardLoadDataRequest) returns (BoardLoadDataResponse) {}
     rpc LoadBoardListByTime(BoardLoadByTimeRequest) returns (BoardLoadByTimeResponse) {}
+    rpc GetTotalBoard(GetTotalBoardsRequest) returns (TotalBoardsRespone) {}
 }
 
+// #region IsUserOwnBoardRequest
+
+message ClearBoardRequest{
+    string boardId = 1;
+}
+
+message ClearBoardResponse{
+    bool status = 1;
+    string message = 2;
+}
+
+// #endregion
+
+// #region IsUserOwnBoardRequest
+
+message IsUserOwnBoardRequest{
+    string boardId = 1;
+    string userId = 2;
+}
+
+message IsUserOwnBoardResponse{
+    bool status = 1;
+    string message = 2;
+}
+
+// #endregion
+
+// #region BoardCreateRequest
+
+message BoardCreateRequest{
+    string userId = 1;
+    string name = 2;
+}
+
+message BoardCreateResponse{
+    bool status = 1;
+}
+
+// #endregion
+
 // #region Shapes & Note SaveRequest
+
+message BoardDataRequest {
+    string boardId = 1;
+    repeated ShapeGrpc shapes = 2;
+    repeated NoteGrpc notes = 3;
+}
+
+message ShapeGrpc {
+    optional string id = 1;
+    string className = 2;
+    string data = 3; // Convert object to Json string
+}
+
+message NoteGrpc {
+    string id = 1;
+    float x = 2;
+    float y = 3;
+    string text = 4;
+}
+
+message BoardDataResponse {
+    bool status = 1;
+    string message = 2;
+}
+
+// #endregion
+
+// #region Shapes & Note SaveRequest
+
+message BoardLoadDataRequest {
+    string boardId = 1;
+}
+
+message BoardLoadDataResponse {
+    string boardId = 1;
+    repeated ShapeGrpc shapes = 2;
+    repeated NoteGrpc notes = 3;
+}
+
+// #endregion
+
+// #region Board by time
 
 message BoardLoadByTimeRequest {
     google.protobuf.Timestamp startDate = 1;
@@ -21,6 +109,15 @@ message BoardLoadByTimeGrpc {
 
 message BoardLoadByTimeResponse {
     repeated BoardLoadByTimeGrpc boardList = 1;
+}
+
+message GetTotalBoardsRequest{
+    // This request does not contain any params
+}
+
+message TotalBoardsRespone{
+    int32 total = 1;
+    int32 boards7days = 2;
 }
 
 // #endregion
