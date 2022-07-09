@@ -21,7 +21,7 @@ namespace AccountServiceTest
             var userController = new UserController(mockUserRepo.Object, mockMapper.Object);
 
 
-            string UserId = null;
+            string UserId = null!;
 
             mockUserRepo.Setup(x => x.FindOneAsync(It.IsAny<FilterDefinition<User>>()))
                 .ReturnsAsync(((User)null!));
@@ -42,13 +42,14 @@ namespace AccountServiceTest
 
             string UserId = "62aee6ba5159f89608499e70";
 
-            var user = new User{
+            var user = new User
+            {
                 Id = UserId
             };
-            
+
             mockUserRepo.Setup(x => x.FindOneAsync(It.IsAny<FilterDefinition<User>>()))
                 .ReturnsAsync(user);
-            
+
             mockUserRepo.Setup(x => x.UpdateOneAsync(UserId, It.IsAny<User>()))
                 .ReturnsAsync(true);
             // // Act
