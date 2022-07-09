@@ -30,5 +30,17 @@ namespace AccountService.Services
 
             return _mapper.Map<UserGrpc>(user);
         }
+        public override async Task<TotalAccountRespone> GetTotalAccount(GetTotalAccountRequest request, ServerCallContext context)
+        {
+            var total = await _repository.FindManyAsync();
+            var filterNewMem = Builders<User>.Filter.Gt("CreatedAt", DateTime.Now.AddDays(-7));
+            var total7 = await _repository.FindManyAsync(filterNewMem);
+            TotalAccountRespone returnValue = new TotalAccountRespone
+            {
+                Total = Convert.ToInt32(total.total),
+                Account7Days = Convert.ToInt32(total7.total),
+            };
+            return returnValue;
+        }
     }
 }

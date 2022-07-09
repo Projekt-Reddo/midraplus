@@ -9,6 +9,7 @@ namespace AdminService.Services
     public interface IGrpcBoardClient
     {
         List<BoardLoadByTime> LoadBoardListByTime(DateTime startDate, DateTime endDate);
+        TotalBoardsRespone GetTotalBoards();
     }
 
     public class GrpcBoardClient : IGrpcBoardClient
@@ -25,12 +26,10 @@ namespace AdminService.Services
             _mapper = mapper;
             _logger = logger;
 
-            string artistServerUrl = _configuration.GetValue<string>("Grpc:Boards");
+            string artistServerUrl = _configuration.GetValue<string>("Grpc:Board");
 
             var channel = GrpcChannel.ForAddress(artistServerUrl);
             _client = new GrpcBoard.GrpcBoardClient(channel);
-
-            _logger.LogInformation($"Connected to ArtistsServer with {artistServerUrl}");
         }
 
         public List<BoardLoadByTime> LoadBoardListByTime(DateTime startDate, DateTime endDate)
@@ -54,6 +53,20 @@ namespace AdminService.Services
                 _logger.LogError(ex, $"Error while getting board from {startDate} to {endDate}");
                 return null;
             }
+        }
+        public TotalBoardsRespone GetTotalBoards()
+        {
+            try
+            {
+                var response = _client.GetTotalBoard(new GetTotalBoardsRequest());
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error while getting total boards");
+                return null;
+            }
+
         }
     }
 }

@@ -54,6 +54,8 @@ builder.Services.AddAuthorization();
 // Grpc Client
 builder.Services.AddScoped<IGrpcBoardClient, GrpcBoardClient>();
 
+builder.Services.AddScoped<IGrpcUserClient, GrpcUserClient>();
+
 // Grpc Server
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
