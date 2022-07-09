@@ -33,12 +33,18 @@ namespace AccountService.Services
         public override async Task<TotalAccountRespone> GetTotalAccount(GetTotalAccountRequest request, ServerCallContext context)
         {
             var total = await _repository.FindManyAsync();
+<<<<<<< Updated upstream
             var filterNewMem = Builders<User>.Filter.Gt("CreatedAt", DateTime.Now.AddDays(-7));
             var total7 = await _repository.FindManyAsync(filterNewMem);
             TotalAccountRespone returnValue = new TotalAccountRespone
             {
                 Total = Convert.ToInt32(total.total),
                 Account7Days = Convert.ToInt32(total7.total),
+=======
+            TotalAccountRespone returnValue = new TotalAccountRespone
+            {
+                Total = Convert.ToInt32(total.total),
+>>>>>>> Stashed changes
             };
             return returnValue;
         }
