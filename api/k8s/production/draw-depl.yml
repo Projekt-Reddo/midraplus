@@ -17,11 +17,11 @@ spec:
           image: draplus/draw-svc:v0.5.0
           resources:
             limits:
-              cpu: 1000m
-              memory: "1500Mi"
+              cpu: 500m
+              memory: "1Gi"
             requests:
-              cpu: 750m
-              memory: "1000Mi"
+              cpu: 300m
+              memory: "800Mi"
 ---
 apiVersion: v1
 kind: Service
