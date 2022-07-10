@@ -38,7 +38,7 @@ namespace AccountService.Services
             TotalAccountRespone returnValue = new TotalAccountRespone
             {
                 Total = Convert.ToInt32(total.total),
-                Account7Days = Convert.ToInt32(total7.total),
+                Account7Days = Convert.ToInt32(total7.total)
             };
             return returnValue;
         }

@@ -66,7 +66,6 @@ namespace AdminService.Services
                 _logger.LogError(ex, $"Error while getting total boards");
                 return null;
             }
-
         }
     }
 }
